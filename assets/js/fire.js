@@ -2,10 +2,29 @@
    fire.js — F.I.R.E project page.
    Ported from the prototype: a rising-ember canvas field in the hero (three
    warm hues, drifting upward and fading in at the base) plus reveal-on-scroll.
+   Perf: the hero canvas loop pauses when the hero scrolls off-screen and when
+   the tab is hidden.
    =========================================================================== */
 (function () {
   'use strict';
   var el = document;
+
+  function gateRAF(target, frame, rootMargin) {
+    var raf = null, inView = false, hidden = document.hidden;
+    var loop = function () { frame(); raf = requestAnimationFrame(loop); };
+    var sync = function () {
+      var active = inView && !hidden;
+      if (active && raf === null) raf = requestAnimationFrame(loop);
+      else if (!active && raf !== null) { cancelAnimationFrame(raf); raf = null; }
+    };
+    document.addEventListener('visibilitychange', function () { hidden = document.hidden; sync(); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (ents) {
+        ents.forEach(function (e) { inView = e.isIntersecting; });
+        sync();
+      }, { rootMargin: rootMargin || '0px', threshold: 0 }).observe(target);
+    } else { inView = true; sync(); }
+  }
 
   function initReveal() {
     var els = el.querySelectorAll('[data-reveal]');
@@ -35,7 +54,7 @@
     var spawn = function () { return { x: Math.random(), y: 1 + Math.random() * 0.2, s: 0.6 + Math.random() * 2.4, vy: 0.12 + Math.random() * 0.34, drift: (Math.random() - 0.5) * 0.5, a: 0.25 + Math.random() * 0.55, c: cols[(Math.random() * cols.length) | 0], ph: Math.random() * 6.28 }; };
     for (var i = 0; i < N; i++) { var p = spawn(); p.y = Math.random(); pts.push(p); }
     var t = 0;
-    var draw = function () {
+    var frame = function () {
       t += 0.016;
       ctx.clearRect(0, 0, w, h);
       for (var k = 0; k < pts.length; k++) {
@@ -51,10 +70,9 @@
         ctx.fillStyle = g;
         ctx.beginPath(); ctx.arc(px, py, p.s * 5, 0, Math.PI * 2); ctx.fill();
       }
-      requestAnimationFrame(draw);
     };
-    draw();
     window.addEventListener('resize', resize);
+    gateRAF(canvas.parentElement, frame, '100px');
   }
 
   function boot() { initEmbers(); initReveal(); }

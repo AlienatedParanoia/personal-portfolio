@@ -3,10 +3,30 @@
    Ported from the prototype: an animated, scrolling EMA-crossover chart in the
    hero (synthetic price series, fast/slow EMA, golden/death-cross markers) plus
    reveal-on-scroll for [data-reveal] sections.
+   Perf: the chart loop pauses off-screen and when the tab is hidden; the
+   expensive full-length line glow (shadowBlur over a long stroke, every frame)
+   is dropped — the small per-marker glow at each crossover is kept.
    =========================================================================== */
 (function () {
   'use strict';
   var el = document;
+
+  function gateRAF(target, frame, rootMargin) {
+    var raf = null, inView = false, hidden = document.hidden;
+    var loop = function () { frame(); raf = requestAnimationFrame(loop); };
+    var sync = function () {
+      var active = inView && !hidden;
+      if (active && raf === null) raf = requestAnimationFrame(loop);
+      else if (!active && raf !== null) { cancelAnimationFrame(raf); raf = null; }
+    };
+    document.addEventListener('visibilitychange', function () { hidden = document.hidden; sync(); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (ents) {
+        ents.forEach(function (e) { inView = e.isIntersecting; });
+        sync();
+      }, { rootMargin: rootMargin || '0px', threshold: 0 }).observe(target);
+    } else { inView = true; sync(); }
+  }
 
   function initReveal() {
     var els = el.querySelectorAll('[data-reveal]');
@@ -51,7 +71,7 @@
     resize();
     var top = function () { return h * 0.30; }, bot = function () { return h * 0.96; };
     var Y = function (val) { return top() + (1 - (val - lo) / (hi - lo)) * (bot() - top()); };
-    var lineSeg = function (arr, s0, color, width, glow) {
+    var lineSeg = function (arr, s0, color, width) {
       ctx.beginPath();
       for (var k = 0; k < W; k++) {
         var idx = s0 + k; if (idx >= M) break;
@@ -60,10 +80,9 @@
         k === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
       ctx.strokeStyle = color; ctx.lineWidth = width; ctx.lineJoin = 'round';
-      if (glow) { ctx.shadowColor = color; ctx.shadowBlur = 14; } else ctx.shadowBlur = 0;
-      ctx.stroke(); ctx.shadowBlur = 0;
+      ctx.stroke();
     };
-    var draw = function () {
+    var frame = function () {
       start += 0.22; if (start > M - W - 1) start = 0;
       var s0 = Math.floor(start);
       ctx.clearRect(0, 0, w, h);
@@ -71,11 +90,11 @@
       ctx.strokeStyle = 'rgba(43,227,139,0.06)'; ctx.lineWidth = 1;
       for (var g = 0; g <= 4; g++) { var gy = top() + (bot() - top()) * g / 4; ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke(); }
       // price (faint)
-      lineSeg(price, s0, 'rgba(174,203,187,0.28)', 1.4, false);
+      lineSeg(price, s0, 'rgba(174,203,187,0.28)', 1.4);
       // slow EMA
-      lineSeg(slow, s0, 'rgba(91,122,107,0.85)', 2, false);
-      // fast EMA
-      lineSeg(fast, s0, '#2BE38B', 2.4, true);
+      lineSeg(slow, s0, 'rgba(91,122,107,0.85)', 2);
+      // fast EMA (line glow dropped for performance — markers keep their glow)
+      lineSeg(fast, s0, '#2BE38B', 2.4);
       // crossover markers
       for (var m = 0; m < cross.length; m++) {
         var cr = cross[m];
@@ -87,10 +106,9 @@
         ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 12; ctx.fill(); ctx.shadowBlur = 0;
         ctx.strokeStyle = 'rgba(5,16,11,0.9)'; ctx.lineWidth = 1.5; ctx.stroke();
       }
-      requestAnimationFrame(draw);
     };
-    draw();
     window.addEventListener('resize', resize);
+    gateRAF(canvas.parentElement, frame, '100px');
   }
 
   function boot() { initChart(); initReveal(); }

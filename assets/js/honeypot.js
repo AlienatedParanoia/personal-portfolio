@@ -2,10 +2,31 @@
    honeypot.js — HoneyPot Wars project page.
    Ported from the prototype: a rising-particle canvas field in the hero plus
    reveal-on-scroll for [data-reveal] sections.
+   Perf: the hero canvas loop pauses when the hero scrolls off-screen and when
+   the tab is hidden.
    =========================================================================== */
 (function () {
   'use strict';
   var el = document;
+
+  // Run `frame` (one draw) in a rAF loop, but only while `target` is on-screen
+  // and the tab is visible.
+  function gateRAF(target, frame, rootMargin) {
+    var raf = null, inView = false, hidden = document.hidden;
+    var loop = function () { frame(); raf = requestAnimationFrame(loop); };
+    var sync = function () {
+      var active = inView && !hidden;
+      if (active && raf === null) raf = requestAnimationFrame(loop);
+      else if (!active && raf !== null) { cancelAnimationFrame(raf); raf = null; }
+    };
+    document.addEventListener('visibilitychange', function () { hidden = document.hidden; sync(); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (ents) {
+        ents.forEach(function (e) { inView = e.isIntersecting; });
+        sync();
+      }, { rootMargin: rootMargin || '0px', threshold: 0 }).observe(target);
+    } else { inView = true; sync(); }
+  }
 
   function hexToRgb(hex) {
     var n = parseInt(hex.slice(1), 16);
@@ -38,7 +59,7 @@
     };
     resize();
     for (var i = 0; i < N; i++) pts.push({ x: Math.random(), y: Math.random(), s: 0.6 + Math.random() * 2.2, vy: 0.04 + Math.random() * 0.16, vx: (Math.random() - 0.5) * 0.05, a: 0.15 + Math.random() * 0.5 });
-    var draw = function () {
+    var frame = function () {
       ctx.clearRect(0, 0, w, h);
       for (var k = 0; k < pts.length; k++) {
         var p = pts[k];
@@ -51,10 +72,9 @@
         ctx.fillStyle = g;
         ctx.beginPath(); ctx.arc(px, py, p.s * 5, 0, Math.PI * 2); ctx.fill();
       }
-      requestAnimationFrame(draw);
     };
-    draw();
     window.addEventListener('resize', resize);
+    gateRAF(canvas.parentElement, frame, '100px');
   }
 
   function boot() { initFx('#FFB23E'); initReveal(); }

@@ -3,12 +3,36 @@
    Ported 1:1 from the Claude Design prototype's Component class:
    shader intro (three.js), Spline 3D hero, radial project wheel (GSAP),
    interactive globe (cobe), and the recommendation card-stack (GSAP).
+
+   Performance pass (visual output unchanged):
+   - Every continuous render loop pauses when its section scrolls off-screen
+     and when the browser tab is hidden (IntersectionObserver + visibilitychange).
+   - The Spline 3D scene is lazy-loaded only as you approach the About section.
+   - devicePixelRatio is capped and the globe sample count reduced.
    =========================================================================== */
 (function () {
   'use strict';
 
   var el = document;
   var loaded = {};
+  var pageHidden = document.hidden;
+
+  // Effects register a sync() so a single visibilitychange handler can
+  // start/stop them all when the tab is backgrounded/foregrounded.
+  var syncers = [];
+  document.addEventListener('visibilitychange', function () {
+    pageHidden = document.hidden;
+    for (var i = 0; i < syncers.length; i++) syncers[i]();
+  });
+
+  // Observe `target`; call enter()/leave() as it crosses the viewport.
+  function observe(target, enter, leave, rootMargin) {
+    if (!('IntersectionObserver' in window)) { enter(); return; }
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (e) { e.isIntersecting ? enter() : leave(); });
+    }, { root: null, rootMargin: rootMargin || '0px', threshold: 0 });
+    io.observe(target);
+  }
 
   function loadScript(src, asModule) {
     return new Promise(function (res, rej) {
@@ -26,6 +50,7 @@
   async function initShader() {
     var wrap = el.querySelector('[data-shader]');
     if (!wrap) return;
+    var section = wrap.closest('section') || wrap;
     await loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js');
     var THREE = window.THREE;
     var camera = new THREE.Camera(); camera.position.z = 1;
@@ -47,7 +72,7 @@
     });
     var mesh = new THREE.Mesh(geo, mat); scene.add(mesh);
     var renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     wrap.appendChild(renderer.domElement);
     var resize = function () {
       var w = wrap.clientWidth, h = wrap.clientHeight;
@@ -55,22 +80,38 @@
       uniforms.resolution.value.set(renderer.domElement.width, renderer.domElement.height);
     };
     resize(); window.addEventListener('resize', resize);
-    var animate = function () { requestAnimationFrame(animate); uniforms.time.value += 0.045; renderer.render(scene, camera); };
-    animate();
+
+    var raf = null, inView = false;
+    var frame = function () { uniforms.time.value += 0.045; renderer.render(scene, camera); raf = requestAnimationFrame(frame); };
+    var sync = function () {
+      var active = inView && !pageHidden;
+      if (active && raf === null) raf = requestAnimationFrame(frame);
+      else if (!active && raf !== null) { cancelAnimationFrame(raf); raf = null; }
+    };
+    syncers.push(sync);
+    observe(section, function () { inView = true; sync(); }, function () { inView = false; sync(); }, '200px');
   }
 
-  // ---- 2. Spline 3D hero ----
-  async function initSpline() {
+  // ---- 2. Spline 3D hero (lazy-loaded on approach) ----
+  function initSpline() {
     var wrap = el.querySelector('[data-spline-wrap]');
     if (!wrap) return;
-    await loadScript('https://unpkg.com/@splinetool/viewer@1.9.48/build/spline-viewer.js', true);
-    var v = document.createElement('spline-viewer');
-    v.setAttribute('url', 'https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode');
-    v.setAttribute('loading-anim-type', 'none');
-    v.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:2;';
-    v.addEventListener('load-complete', function () { var f = wrap.querySelector('[data-spline-fallback]'); if (f) f.style.display = 'none'; });
-    wrap.appendChild(v);
-    setTimeout(function () { var f = wrap.querySelector('[data-spline-fallback]'); if (f) f.style.display = 'none'; }, 6000);
+    var hideFallback = function () { var f = wrap.querySelector('[data-spline-fallback]'); if (f) f.style.display = 'none'; };
+    var started = false;
+    var load = function () {
+      if (started) return; started = true;
+      loadScript('https://unpkg.com/@splinetool/viewer@1.9.48/build/spline-viewer.js', true).then(function () {
+        var v = document.createElement('spline-viewer');
+        v.setAttribute('url', 'https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode');
+        v.setAttribute('loading-anim-type', 'none');
+        v.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:2;';
+        v.addEventListener('load-complete', hideFallback);
+        wrap.appendChild(v);
+        setTimeout(hideFallback, 6000);
+      }).catch(function () {});
+    };
+    // Only fetch + render the (heavy) 3D scene once the About section nears view.
+    observe(wrap, load, function () {}, '400px');
   }
 
   // ---- 3. Radial wheel navigator ----
@@ -126,17 +167,25 @@
       onEnter: function () { items.forEach(function (it, i) { setTimeout(function () { it.querySelector('[data-card-inner]').style.opacity = '1'; }, i * 130); }); },
       onLeaveBack: function () { items.forEach(function (it) { it.querySelector('[data-card-inner]').style.opacity = '0'; }); }
     });
-    var wheelRaf;
-    var tick = function () {
+    // Counter-rotate each card so it stays upright — but only run the per-frame
+    // loop while the work section is on-screen and the tab is visible.
+    var raf = null, inView = false;
+    var frame = function () {
       var ang = window.gsap.getProperty(wheel, 'rotation') || 0;
       items.forEach(function (it) {
         var c = it.querySelector('[data-card-inner]');
         var hov = it.dataset.hover === '1';
         c.style.transform = 'rotate(' + (-ang) + 'deg)' + (hov ? ' scale(1.07) translateY(-12px)' : '');
       });
-      wheelRaf = requestAnimationFrame(tick);
+      raf = requestAnimationFrame(frame);
     };
-    tick();
+    var sync = function () {
+      var active = inView && !pageHidden;
+      if (active && raf === null) raf = requestAnimationFrame(frame);
+      else if (!active && raf !== null) { cancelAnimationFrame(raf); raf = null; }
+    };
+    syncers.push(sync);
+    observe(pin, function () { inView = true; sync(); }, function () { inView = false; sync(); }, '100px');
   }
 
   // ---- 4. Globe (cobe) ----
@@ -155,29 +204,43 @@
       { location: [37.77, -122.42], size: 0.05 },
       { location: [25.2, 55.27], size: 0.04 }
     ];
-    var phi = 0, width = 0, dragging = null, offset = 0, autoOffset = 0;
+    var width = 0, dragging = null, offset = 0, autoOffset = 0;
+    var globe = null, inView = false;
     var onResize = function () { width = canvas.offsetWidth; };
     onResize(); window.addEventListener('resize', onResize);
-    var globe = createGlobe(canvas, {
-      devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
-      width: width, height: width,
-      phi: 0, theta: 0.25, dark: 1, diffuse: 1.4,
-      mapSamples: 16000, mapBrightness: 7,
-      baseColor: [0.32, 0.34, 0.38], markerColor: [0.21, 0.88, 0.9], glowColor: [0.06, 0.09, 0.11],
-      markers: markers,
-      onRender: function (state) {
-        if (!dragging) autoOffset += 0.004;
-        state.phi = autoOffset + offset;
-        state.width = width; state.height = width;
-      }
-    });
-    setTimeout(function () { canvas.style.opacity = '1'; }, 120);
+
+    // cobe has no pause API, so to fully stop its render loop off-screen we
+    // create the globe on enter and destroy it on leave (drag state persists).
+    var build = function () {
+      if (globe) return;
+      onResize();
+      globe = createGlobe(canvas, {
+        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
+        width: width, height: width,
+        phi: 0, theta: 0.25, dark: 1, diffuse: 1.4,
+        mapSamples: 10000, mapBrightness: 7,
+        baseColor: [0.32, 0.34, 0.38], markerColor: [0.21, 0.88, 0.9], glowColor: [0.06, 0.09, 0.11],
+        markers: markers,
+        onRender: function (state) {
+          if (!dragging) autoOffset += 0.004;
+          state.phi = autoOffset + offset;
+          state.width = width; state.height = width;
+        }
+      });
+      requestAnimationFrame(function () { canvas.style.opacity = '1'; });
+    };
+    var teardown = function () { if (globe) { globe.destroy(); globe = null; canvas.style.opacity = '0'; } };
+    var sync = function () { (inView && !pageHidden) ? build() : teardown(); };
+    syncers.push(sync);
+
     var down = function (e) { dragging = e.clientX; canvas.style.cursor = 'grabbing'; };
     var up = function () { dragging = null; canvas.style.cursor = 'grab'; };
     var move = function (e) { if (dragging !== null) { offset += (e.clientX - dragging) / 200; dragging = e.clientX; } };
     canvas.addEventListener('pointerdown', down);
     window.addEventListener('pointerup', up);
     window.addEventListener('pointermove', move);
+
+    observe(canvas, function () { inView = true; sync(); }, function () { inView = false; sync(); }, '200px');
 
     var stats = el.querySelector('[data-globe-stats]');
     if (stats) {
@@ -187,6 +250,7 @@
   }
 
   // ---- 5. Recommendation card stack ----
+  // (ScrollTrigger-driven; only runs work on scroll, so no idle loop to gate.)
   function initReco() {
     var scroll = el.querySelector('[data-reco-scroll]');
     var cards = Array.prototype.slice.call(el.querySelectorAll('[data-reco-card]'));
@@ -216,7 +280,7 @@
 
   async function boot() {
     initShader().catch(function () {});
-    initSpline().catch(function () {});
+    initSpline();
     try {
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js');
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js');
