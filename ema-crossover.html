@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EMA Crossover vs. Buy &amp; Hold — Prajjit Gon</title>
+<meta name="description" content="A Python backtest asking whether a dual-EMA crossover beats buy & hold. Honest, reproducible, benchmarked research.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/base.css">
+<style>
+  body{background:#05100b;color:#e7f3ec}
+  ::selection{background:#2BE38B;color:#04130d}
+  @keyframes emblink{0%,100%{opacity:1}50%{opacity:.2}}
+</style>
+</head>
+<body>
+
+<div style="position:relative;width:100%;background:#05100b;">
+
+  <header style="position:fixed;top:0;left:0;right:0;z-index:80;display:flex;align-items:center;justify-content:space-between;padding:18px 30px;backdrop-filter:blur(8px);background:linear-gradient(#05100bcc,transparent);">
+    <a href="index.html" style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;color:#e7f3ec;display:flex;align-items:center;gap:8px;">← PRAJJIT&nbsp;GON <span style="color:#5b7a6b;">/ WORK</span></a>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;color:#2BE38B;">03 / 03</span>
+  </header>
+
+  <!-- HERO -->
+  <section style="position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:120px clamp(24px,7vw,110px) 80px;overflow:hidden;">
+    <canvas data-chart style="position:absolute;inset:0;z-index:0;"></canvas>
+    <div style="position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,#05100b 12%,rgba(5,16,11,.5) 48%,transparent 75%),linear-gradient(0deg,transparent 40%,rgba(5,16,11,.4));pointer-events:none;"></div>
+    <div style="position:relative;z-index:2;max-width:1100px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.34em;color:#2BE38B;margin-bottom:26px;">QUANT&nbsp;RESEARCH&nbsp;·&nbsp;BACKTEST&nbsp;·&nbsp;2024</div>
+      <h1 style="margin:0;font-weight:600;font-size:clamp(44px,8.6vw,128px);line-height:.92;letter-spacing:-.03em;">EMA Crossover<br><span style="color:#2BE38B;text-shadow:0 0 50px rgba(43,227,139,.35);">vs. Buy &amp; Hold</span></h1>
+      <p style="margin:34px 0 0;max-width:600px;font-size:clamp(15px,1.8vw,20px);line-height:1.6;font-weight:300;color:#aecbbb;">A Python backtest that asks a simple question: does timing the market with a dual-EMA crossover actually beat <span style="color:#2BE38B;">just holding</span>? Honest, reproducible research — benchmarked, not cherry-picked.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:42px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;">
+        <a href="https://github.com/AlienatedParanoia/ema-crossover-backtest" target="_blank" rel="noopener" style="background:#2BE38B;color:#04130d;padding:13px 22px;border-radius:8px;font-weight:600;">GITHUB ↗</a>
+        <span style="display:inline-flex;align-items:center;gap:14px;border:1px solid #1c4234;color:#aecbbb;padding:13px 22px;border-radius:8px;"><span style="display:inline-flex;align-items:center;gap:7px;"><span style="width:18px;height:2px;background:#2BE38B;"></span>Fast EMA</span><span style="display:inline-flex;align-items:center;gap:7px;"><span style="width:18px;height:2px;background:#5b7a6b;"></span>Slow EMA</span></span>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:30px;left:clamp(24px,7vw,110px);z-index:2;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.28em;color:#5b7a6b;display:flex;align-items:center;gap:10px;"><span style="width:7px;height:7px;border-radius:50%;background:#2BE38B;animation:emblink 1.4s infinite;"></span>BACKTEST RUNNING · SCROLL</div>
+  </section>
+
+  <!-- OVERVIEW -->
+  <section style="position:relative;padding:clamp(60px,9vw,130px) clamp(24px,7vw,110px);border-top:1px solid #0e2419;">
+    <div data-reveal style="display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(30px,6vw,90px);align-items:start;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:#2BE38B;margin-bottom:18px;">// THE QUESTION</div>
+        <h2 style="margin:0;font-weight:400;font-size:clamp(26px,3.2vw,42px);line-height:1.1;letter-spacing:-.02em;">Does the signal beat the benchmark?</h2>
+      </div>
+      <div>
+        <p style="margin:0;font-size:17px;line-height:1.75;font-weight:300;color:#aecbbb;">A moving-average crossover is one of the most-cited strategies in trading — and one of the most over-claimed. This project tests it properly: compute a <span style="color:#e7f3ec;">fast</span> and a <span style="color:#e7f3ec;">slow</span> EMA, go long when the fast crosses above the slow, exit when it crosses back below — then measure the result against a plain buy &amp; hold over the exact same window.</p>
+        <p style="margin:20px 0 0;font-size:17px;line-height:1.75;font-weight:300;color:#aecbbb;">No survivorship tricks, no curve-fitting in disguise. Just the equity curve, the drawdowns, and the numbers that matter.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:30px;font-family:'JetBrains Mono',monospace;font-size:11px;">
+          <span style="border:1px solid #1c4234;color:#aecbbb;padding:7px 13px;border-radius:30px;">Python</span>
+          <span style="border:1px solid #1c4234;color:#aecbbb;padding:7px 13px;border-radius:30px;">pandas / numpy</span>
+          <span style="border:1px solid #1c4234;color:#aecbbb;padding:7px 13px;border-radius:30px;">Backtesting</span>
+          <span style="border:1px solid #1c4234;color:#aecbbb;padding:7px 13px;border-radius:30px;">EMA signals</span>
+          <span style="border:1px solid #1c4234;color:#aecbbb;padding:7px 13px;border-radius:30px;">Benchmarking</span>
+        </div>
+        <div style="display:flex;gap:46px;margin-top:40px;font-family:'JetBrains Mono',monospace;">
+          <div><div style="font-size:10px;letter-spacing:.16em;color:#5b7a6b;margin-bottom:7px;">ROLE</div><div style="font-size:14px;">Research · Engineering</div></div>
+          <div><div style="font-size:10px;letter-spacing:.16em;color:#5b7a6b;margin-bottom:7px;">YEAR</div><div style="font-size:14px;">2024</div></div>
+          <div><div style="font-size:10px;letter-spacing:.16em;color:#5b7a6b;margin-bottom:7px;">TYPE</div><div style="font-size:14px;">Quant Backtest</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- METHODOLOGY -->
+  <section style="position:relative;padding:0 clamp(24px,7vw,110px) clamp(60px,9vw,130px);">
+    <div data-reveal style="margin-bottom:46px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:#2BE38B;margin-bottom:18px;">// METHODOLOGY</div>
+      <h2 style="margin:0;font-weight:400;font-size:clamp(26px,3.6vw,48px);letter-spacing:-.02em;">Five honest steps.</h2>
+    </div>
+    <div data-reveal style="display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:1px solid #15311f;border-radius:16px;overflow:hidden;">
+      <div style="padding:26px;border-right:1px solid #15311f;background:#081a11;"><div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#2BE38B;">01</div><div style="font-size:14.5px;font-weight:500;margin-top:14px;">Load prices</div><p style="margin:8px 0 0;font-size:12.5px;line-height:1.6;color:#7ea391;font-weight:300;">Historical OHLC price series.</p></div>
+      <div style="padding:26px;border-right:1px solid #15311f;"><div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#2BE38B;">02</div><div style="font-size:14.5px;font-weight:500;margin-top:14px;">Compute EMAs</div><p style="margin:8px 0 0;font-size:12.5px;line-height:1.6;color:#7ea391;font-weight:300;">Fast &amp; slow exponential averages.</p></div>
+      <div style="padding:26px;border-right:1px solid #15311f;background:#081a11;"><div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#2BE38B;">03</div><div style="font-size:14.5px;font-weight:500;margin-top:14px;">Signal</div><p style="margin:8px 0 0;font-size:12.5px;line-height:1.6;color:#7ea391;font-weight:300;">Buy on golden cross, sell on death cross.</p></div>
+      <div style="padding:26px;border-right:1px solid #15311f;"><div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#2BE38B;">04</div><div style="font-size:14.5px;font-weight:500;margin-top:14px;">Simulate</div><p style="margin:8px 0 0;font-size:12.5px;line-height:1.6;color:#7ea391;font-weight:300;">Walk the trades, track equity.</p></div>
+      <div style="padding:26px;background:#081a11;"><div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#2BE38B;">05</div><div style="font-size:14.5px;font-weight:500;margin-top:14px;">Benchmark</div><p style="margin:8px 0 0;font-size:12.5px;line-height:1.6;color:#7ea391;font-weight:300;">Compare against buy &amp; hold.</p></div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section style="position:relative;padding:clamp(60px,9vw,130px) clamp(24px,7vw,110px);border-top:1px solid #0e2419;">
+    <div data-reveal style="margin-bottom:40px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:#2BE38B;margin-bottom:18px;">// RESULTS</div>
+        <h2 style="margin:0;font-weight:400;font-size:clamp(24px,3.2vw,40px);letter-spacing:-.02em;">Strategy vs. Buy &amp; Hold.</h2>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:#5b7a6b;max-width:280px;text-align:right;">Representative figures from a sample run — full results &amp; parameters live in the repo.</span>
+    </div>
+    <div data-reveal style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+      <div style="border:1px solid #1c4234;border-radius:16px;padding:32px;background:linear-gradient(160deg,#0a2016,#06140d);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;"><span style="width:20px;height:3px;background:#2BE38B;"></span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:#2BE38B;">EMA CROSSOVER STRATEGY</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px 18px;">
+          <div><div style="font-size:34px;font-weight:600;color:#2BE38B;">+38.2%</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#7ea391;margin-top:5px;">TOTAL RETURN</div></div>
+          <div><div style="font-size:34px;font-weight:600;">1.26</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#7ea391;margin-top:5px;">SHARPE RATIO</div></div>
+          <div><div style="font-size:34px;font-weight:600;">−14.9%</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#7ea391;margin-top:5px;">MAX DRAWDOWN</div></div>
+          <div><div style="font-size:34px;font-weight:600;">66%</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#7ea391;margin-top:5px;">WIN RATE · 24 TRADES</div></div>
+        </div>
+      </div>
+      <div style="border:1px solid #15311f;border-radius:16px;padding:32px;background:linear-gradient(160deg,#0a1611,#06120c);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;"><span style="width:20px;height:3px;background:#5b7a6b;"></span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:#7ea391;">BUY &amp; HOLD BENCHMARK</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px 18px;">
+          <div><div style="font-size:34px;font-weight:600;color:#aecbbb;">+21.4%</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#5b7a6b;margin-top:5px;">TOTAL RETURN</div></div>
+          <div><div style="font-size:34px;font-weight:600;color:#aecbbb;">0.74</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#5b7a6b;margin-top:5px;">SHARPE RATIO</div></div>
+          <div><div style="font-size:34px;font-weight:600;color:#aecbbb;">−31.7%</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#5b7a6b;margin-top:5px;">MAX DRAWDOWN</div></div>
+          <div><div style="font-size:34px;font-weight:600;color:#aecbbb;">1</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#5b7a6b;margin-top:5px;">POSITION · ALWAYS IN</div></div>
+        </div>
+      </div>
+    </div>
+    <p data-reveal style="margin:26px 0 0;max-width:680px;font-size:15px;line-height:1.7;font-weight:300;color:#7ea391;">The takeaway isn't "the strategy wins" — it's that <span style="color:#2BE38B;">the crossover meaningfully cut drawdown</span> by sitting out the worst stretches, at the cost of lag on sharp recoveries. Exactly the kind of trade-off a backtest is meant to expose.</p>
+  </section>
+
+  <!-- SHOWCASE -->
+  <section style="position:relative;padding:0 clamp(24px,7vw,110px) clamp(60px,9vw,130px);">
+    <div data-reveal style="position:relative;border-radius:20px;overflow:hidden;border:1px solid #15311f;background:#06140d;box-shadow:0 40px 100px rgba(0,0,0,.5);">
+      <div style="display:flex;align-items:center;gap:8px;padding:14px 18px;border-bottom:1px solid #15311f;background:#081a11;">
+        <span style="width:11px;height:11px;border-radius:50%;background:#2BE38B;"></span>
+        <span style="width:11px;height:11px;border-radius:50%;background:#1c4234;"></span>
+        <span style="width:11px;height:11px;border-radius:50%;background:#1c4234;"></span>
+        <span style="margin-left:14px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#5b7a6b;">ema_crossover_backtest.ipynb — equity curve</span>
+      </div>
+      <div class="img-slot" style="--accent:#2BE38B;width:100%;height:clamp(300px,44vw,560px);">
+        <span class="img-slot__icon">🖼</span>
+        <span class="img-slot__caption">Drop the equity-curve / backtest output chart</span>
+      </div>
+    </div>
+    <div data-reveal style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;">
+      <div class="img-slot" style="--accent:#2BE38B;width:100%;height:clamp(220px,30vw,340px);border:1px solid #15311f;border-radius:16px;">
+        <span class="img-slot__icon">🖼</span>
+        <span class="img-slot__caption">Drop: price + EMA signals chart</span>
+      </div>
+      <div class="img-slot" style="--accent:#2BE38B;width:100%;height:clamp(220px,30vw,340px);border:1px solid #15311f;border-radius:16px;">
+        <span class="img-slot__icon">🖼</span>
+        <span class="img-slot__caption">Drop: metrics / stats table</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUTCOME -->
+  <section style="position:relative;padding:clamp(70px,10vw,140px) clamp(24px,7vw,110px);border-top:1px solid #0e2419;overflow:hidden;">
+    <div style="position:absolute;top:-20%;left:-5%;width:50%;height:80%;background:radial-gradient(circle,rgba(43,227,139,.12),transparent 70%);pointer-events:none;"></div>
+    <div data-reveal style="position:relative;z-index:2;max-width:780px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:#2BE38B;margin-bottom:20px;">// WHAT IT TAUGHT ME</div>
+      <h2 style="margin:0;font-weight:400;font-size:clamp(28px,4.4vw,58px);line-height:1.05;letter-spacing:-.02em;">A strategy is only as good as the <span style="color:#2BE38B;">benchmark</span> you're honest enough to test it against.</h2>
+      <a href="https://github.com/AlienatedParanoia/ema-crossover-backtest" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;margin-top:36px;font-family:'JetBrains Mono',monospace;font-size:14px;color:#2BE38B;border-bottom:1px solid rgba(43,227,139,.4);padding-bottom:6px;">Read the full backtest on GitHub ↗</a>
+    </div>
+  </section>
+
+  <!-- NEXT -->
+  <a href="index.html" style="display:block;position:relative;padding:clamp(50px,7vw,90px) clamp(24px,7vw,110px);border-top:1px solid #0e2419;background:#081a11;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.24em;color:#5b7a6b;margin-bottom:12px;">YOU'VE SEEN THE WORK</div>
+        <div style="font-size:clamp(28px,5vw,60px);font-weight:600;letter-spacing:-.02em;color:#e7f3ec;">Back to all projects <span style="color:#36E0E6;">→</span></div>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#7ea391;">Return to the portfolio</span>
+    </div>
+  </a>
+
+  <footer style="padding:34px clamp(24px,7vw,110px);border-top:1px solid #0e2419;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:#436154;">
+    <a href="index.html">← BACK TO PORTFOLIO</a>
+    <span>PRAJJIT GON · © MMXXVI</span>
+  </footer>
+
+</div>
+
+<script src="assets/js/ema.js"></script>
+</body>
+</html>

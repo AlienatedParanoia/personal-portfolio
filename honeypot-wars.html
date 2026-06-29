@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HoneyPot Wars — Prajjit Gon</title>
+<meta name="description" content="HoneyPot Wars — an AI-powered security-assessment platform. An autonomous agent probes a client's repo or URL with consent and delivers a private pentest report.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/base.css">
+<style>
+  body{background:#0a0804;color:#f3ecdd}
+  ::selection{background:#FFB23E;color:#1a1206}
+  @keyframes hpscan{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
+  @keyframes hpfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  @keyframes hpblink{0%,100%{opacity:1}50%{opacity:.2}}
+</style>
+</head>
+<body>
+
+<div style="position:relative;width:100%;background:#0a0804;">
+
+  <header style="position:fixed;top:0;left:0;right:0;z-index:80;display:flex;align-items:center;justify-content:space-between;padding:18px 30px;backdrop-filter:blur(8px);background:linear-gradient(#0a0804cc,transparent);">
+    <a href="index.html" style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;color:#f3ecdd;display:flex;align-items:center;gap:8px;">← PRAJJIT&nbsp;GON <span style="color:#7a6c4d;">/ WORK</span></a>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;color:#FFB23E;">01 / 03</span>
+  </header>
+
+  <!-- HERO -->
+  <section style="position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:120px clamp(24px,7vw,110px) 80px;overflow:hidden;">
+    <canvas data-fx style="position:absolute;inset:0;z-index:0;opacity:.9;"></canvas>
+    <div style="position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 70% 60% at 30% 30%, rgba(255,178,62,.16), transparent 60%),radial-gradient(ellipse at 50% 120%, rgba(255,178,62,.08), transparent 60%);pointer-events:none;"></div>
+    <div data-scanline style="position:absolute;left:0;right:0;top:0;height:120px;z-index:1;background:linear-gradient(180deg,transparent,rgba(255,178,62,.07),transparent);animation:hpscan 7s linear infinite;pointer-events:none;"></div>
+    <div style="position:relative;z-index:2;max-width:1100px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.34em;color:#FFB23E;margin-bottom:26px;">AI&nbsp;SECURITY&nbsp;PLATFORM&nbsp;·&nbsp;2025</div>
+      <h1 style="margin:0;font-weight:600;font-size:clamp(48px,10vw,150px);line-height:.9;letter-spacing:-.035em;">HoneyPot<br><span style="color:#FFB23E;text-shadow:0 0 60px rgba(255,178,62,.4);">Wars</span></h1>
+      <p style="margin:34px 0 0;max-width:600px;font-size:clamp(15px,1.8vw,20px);line-height:1.6;font-weight:300;color:#cdc1a8;">An AI-powered security-assessment platform. An autonomous agent probes a client's repo or URL — <span style="color:#FFB23E;">with consent</span> — the way a real attacker would, and delivers a clean, private pentest report.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:42px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;">
+        <a href="https://honey-pot-wars.vercel.app" target="_blank" rel="noopener" style="background:#FFB23E;color:#1a1206;padding:13px 22px;border-radius:8px;font-weight:500;">LIVE SITE ↗</a>
+        <a href="https://github.com/AlienatedParanoia/HoneyPot-Wars" target="_blank" rel="noopener" style="border:1px solid #4a3c1e;color:#f3ecdd;padding:13px 22px;border-radius:8px;">PLATFORM REPO ↗</a>
+        <a href="https://github.com/advaithprabhudev/HoneyPot-Wars" target="_blank" rel="noopener" style="border:1px solid #4a3c1e;color:#f3ecdd;padding:13px 22px;border-radius:8px;">AI AGENT REPO ↗</a>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:30px;left:clamp(24px,7vw,110px);z-index:2;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.28em;color:#7a6c4d;display:flex;align-items:center;gap:10px;"><span style="width:7px;height:7px;border-radius:50%;background:#FFB23E;animation:hpblink 1.4s infinite;"></span>SYSTEM ONLINE · SCROLL TO INSPECT</div>
+  </section>
+
+  <!-- OVERVIEW -->
+  <section style="position:relative;padding:clamp(60px,9vw,130px) clamp(24px,7vw,110px);border-top:1px solid #1d160a;">
+    <div data-reveal style="display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(30px,6vw,90px);align-items:start;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:#FFB23E;margin-bottom:18px;">// OVERVIEW</div>
+        <h2 style="margin:0;font-weight:400;font-size:clamp(26px,3.2vw,42px);line-height:1.1;letter-spacing:-.02em;">Two systems,<br>one defender's edge.</h2>
+      </div>
+      <div>
+        <p style="margin:0;font-size:17px;line-height:1.75;font-weight:300;color:#cdc1a8;">HoneyPot Wars is built as two cooperating systems. A <span style="color:#f3ecdd;">platform</span> handles client accounts, consented scan requests, admin approval, and the secure delivery of reports. A separate <span style="color:#f3ecdd;">autonomous AI agent</span> performs the assessment itself — reasoning over a target like an attacker, then writing up what it found.</p>
+        <p style="margin:20px 0 0;font-size:17px;line-height:1.75;font-weight:300;color:#cdc1a8;">The whole thing is secure by construction: row-level security, server-only admin actions, and reports that are never publicly reachable.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:30px;font-family:'JetBrains Mono',monospace;font-size:11px;">
+          <span style="border:1px solid #4a3c1e;color:#cdc1a8;padding:7px 13px;border-radius:30px;">Next.js 14</span>
+          <span style="border:1px solid #4a3c1e;color:#cdc1a8;padding:7px 13px;border-radius:30px;">TypeScript (strict)</span>
+          <span style="border:1px solid #4a3c1e;color:#cdc1a8;padding:7px 13px;border-radius:30px;">Supabase · Auth · Postgres</span>
+          <span style="border:1px solid #4a3c1e;color:#cdc1a8;padding:7px 13px;border-radius:30px;">Row-Level Security</span>
+          <span style="border:1px solid #4a3c1e;color:#cdc1a8;padding:7px 13px;border-radius:30px;">Zod</span>
+          <span style="border:1px solid #4a3c1e;color:#cdc1a8;padding:7px 13px;border-radius:30px;">AI Agent · TS monorepo</span>
+        </div>
+        <div style="display:flex;gap:46px;margin-top:40px;font-family:'JetBrains Mono',monospace;">
+          <div><div style="font-size:10px;letter-spacing:.16em;color:#7a6c4d;margin-bottom:7px;">ROLE</div><div style="font-size:14px;">Full-stack · Platform</div></div>
+          <div><div style="font-size:10px;letter-spacing:.16em;color:#7a6c4d;margin-bottom:7px;">YEAR</div><div style="font-size:14px;">2025</div></div>
+          <div><div style="font-size:10px;letter-spacing:.16em;color:#7a6c4d;margin-bottom:7px;">TYPE</div><div style="font-size:14px;">Security SaaS</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHOWCASE -->
+  <section style="position:relative;padding:0 clamp(24px,7vw,110px) clamp(50px,7vw,90px);">
+    <div data-reveal style="position:relative;border-radius:20px;overflow:hidden;border:1px solid #2a2010;background:#100b04;box-shadow:0 40px 100px rgba(0,0,0,.5);">
+      <div style="display:flex;align-items:center;gap:8px;padding:14px 18px;border-bottom:1px solid #2a2010;background:#0d0903;">
+        <span style="width:11px;height:11px;border-radius:50%;background:#FFB23E;"></span>
+        <span style="width:11px;height:11px;border-radius:50%;background:#4a3c1e;"></span>
+        <span style="width:11px;height:11px;border-radius:50%;background:#4a3c1e;"></span>
+        <span style="margin-left:14px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#7a6c4d;">honey-pot-wars.vercel.app</span>
+      </div>
+      <div class="img-slot" style="--accent:#FFB23E;width:100%;height:clamp(300px,44vw,560px);">
+        <span class="img-slot__icon">🖼</span>
+        <span class="img-slot__caption">Drop the arcade landing / dashboard screenshot</span>
+      </div>
+    </div>
+    <div data-reveal style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;">
+      <div class="img-slot" style="--accent:#FFB23E;width:100%;height:clamp(220px,30vw,340px);border:1px solid #2a2010;border-radius:16px;">
+        <span class="img-slot__icon">🖼</span>
+        <span class="img-slot__caption">Drop: client session-request flow</span>
+      </div>
+      <div class="img-slot" style="--accent:#FFB23E;width:100%;height:clamp(220px,30vw,340px);border:1px solid #2a2010;border-radius:16px;">
+        <span class="img-slot__icon">🖼</span>
+        <span class="img-slot__caption">Drop: admin report-upload panel</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLOW -->
+  <section style="position:relative;padding:clamp(60px,9vw,130px) clamp(24px,7vw,110px);border-top:1px solid #1d160a;">
+    <div data-reveal style="margin-bottom:54px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:#FFB23E;margin-bottom:18px;">// THE ENGAGEMENT FLOW</div>
+      <h2 style="margin:0;font-weight:400;font-size:clamp(26px,3.6vw,48px);letter-spacing:-.02em;">Consent in. Report out.</h2>
+    </div>
+    <div data-reveal style="display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:1px solid #2a2010;border-radius:16px;overflow:hidden;">
+      <div style="padding:26px;border-right:1px solid #2a2010;background:#0d0903;"><div style="font-family:'JetBrains Mono',monospace;font-size:30px;color:#FFB23E;">01</div><div style="font-size:15px;font-weight:500;margin-top:14px;">Sign up</div><p style="margin:8px 0 0;font-size:12.5px;line-height:1.6;color:#9a8e72;font-weight:300;">Client creates an account on the platform.</p></div>
+      <div style="padding:26px;border-right:1px solid #2a2010;"><div style="font-family:'JetBrains Mono',monospace;font-size:30px;color:#FFB23E;">02</div><div style="font-size:15px;font-weight:500;margin-top:14px;">Request scan</div><p style="margin:8px 0 0;font-size:12.5px;line-height:1.6;color:#9a8e72;font-weight:300;">Submits a repo/URL plus explicit consent.</p></div>
+      <div style="padding:26px;border-right:1px solid #2a2010;background:#0d0903;"><div style="font-family:'JetBrains Mono',monospace;font-size:30px;color:#FFB23E;">03</div><div style="font-size:15px;font-weight:500;margin-top:14px;">Admin approves</div><p style="margin:8px 0 0;font-size:12.5px;line-height:1.6;color:#9a8e72;font-weight:300;">Approval activates the account & engagement.</p></div>
+      <div style="padding:26px;border-right:1px solid #2a2010;"><div style="font-family:'JetBrains Mono',monospace;font-size:30px;color:#FFB23E;">04</div><div style="font-size:15px;font-weight:500;margin-top:14px;">Agent attacks</div><p style="margin:8px 0 0;font-size:12.5px;line-height:1.6;color:#9a8e72;font-weight:300;">The AI agent probes the target autonomously.</p></div>
+      <div style="padding:26px;background:#0d0903;"><div style="font-family:'JetBrains Mono',monospace;font-size:30px;color:#FFB23E;">05</div><div style="font-size:15px;font-weight:500;margin-top:14px;">Secure report</div><p style="margin:8px 0 0;font-size:12.5px;line-height:1.6;color:#9a8e72;font-weight:300;">PDF delivered via short-lived signed URLs.</p></div>
+    </div>
+  </section>
+
+  <!-- SECURITY GRID -->
+  <section style="position:relative;padding:0 clamp(24px,7vw,110px) clamp(60px,9vw,130px);">
+    <div data-reveal style="margin-bottom:40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:#FFB23E;margin-bottom:18px;">// SECURE BY CONSTRUCTION</div>
+      <h2 style="margin:0;font-weight:400;font-size:clamp(24px,3.2vw,40px);letter-spacing:-.02em;">The boring parts done right.</h2>
+    </div>
+    <div data-reveal style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+      <div style="border:1px solid #2a2010;border-radius:14px;padding:26px;background:linear-gradient(160deg,#120c05,#0c0903);"><div style="font-size:22px;margin-bottom:14px;">🔐</div><div style="font-size:16px;font-weight:500;">Row-level security</div><p style="margin:10px 0 0;font-size:13px;line-height:1.65;color:#9a8e72;font-weight:300;">Every client is locked to their own profile, requests and reports — enforced in the database.</p></div>
+      <div style="border:1px solid #2a2010;border-radius:14px;padding:26px;background:linear-gradient(160deg,#120c05,#0c0903);"><div style="font-size:22px;margin-bottom:14px;">🛡️</div><div style="font-size:16px;font-weight:500;">Server-only admin</div><p style="margin:10px 0 0;font-size:13px;line-height:1.65;color:#9a8e72;font-weight:300;">Admin actions run behind an email allowlist in middleware and API routes, using a service-role key.</p></div>
+      <div style="border:1px solid #2a2010;border-radius:14px;padding:26px;background:linear-gradient(160deg,#120c05,#0c0903);"><div style="font-size:22px;margin-bottom:14px;">🚫</div><div style="font-size:16px;font-weight:500;">No self-activation</div><p style="margin:10px 0 0;font-size:13px;line-height:1.65;color:#9a8e72;font-weight:300;">A DB trigger blocks any non-admin from changing their own account status.</p></div>
+      <div style="border:1px solid #2a2010;border-radius:14px;padding:26px;background:linear-gradient(160deg,#120c05,#0c0903);"><div style="font-size:22px;margin-bottom:14px;">📂</div><div style="font-size:16px;font-weight:500;">Private report bucket</div><p style="margin:10px 0 0;font-size:13px;line-height:1.65;color:#9a8e72;font-weight:300;">Reports live in a private bucket, readable only by the owning client or an admin.</p></div>
+    </div>
+  </section>
+
+  <!-- OUTCOME -->
+  <section style="position:relative;padding:clamp(70px,10vw,140px) clamp(24px,7vw,110px);border-top:1px solid #1d160a;overflow:hidden;">
+    <div style="position:absolute;top:-30%;right:-5%;width:50%;height:80%;background:radial-gradient(circle,rgba(255,178,62,.12),transparent 70%);pointer-events:none;"></div>
+    <div data-reveal style="position:relative;z-index:2;max-width:760px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:#FFB23E;margin-bottom:20px;">// OUTCOME</div>
+      <h2 style="margin:0;font-weight:400;font-size:clamp(28px,4.4vw,58px);line-height:1.05;letter-spacing:-.02em;">A live platform that makes offensive security <span style="color:#FFB23E;">approachable</span> — and accountable.</h2>
+      <a href="https://honey-pot-wars.vercel.app" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;margin-top:36px;font-family:'JetBrains Mono',monospace;font-size:14px;color:#FFB23E;border-bottom:1px solid rgba(255,178,62,.4);padding-bottom:6px;">Visit honey-pot-wars.vercel.app ↗</a>
+    </div>
+  </section>
+
+  <!-- NEXT -->
+  <a href="fire.html" style="display:block;position:relative;padding:clamp(50px,7vw,90px) clamp(24px,7vw,110px);border-top:1px solid #1d160a;background:#0c0903;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.24em;color:#7a6c4d;margin-bottom:12px;">NEXT PROJECT — 02 / 03</div>
+        <div style="font-size:clamp(30px,5vw,64px);font-weight:600;letter-spacing:-.02em;color:#f3ecdd;">F.I.R.E <span style="color:#FF5A36;">→</span></div>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#9a8e72;">Student opportunity platform</span>
+    </div>
+  </a>
+
+  <footer style="padding:34px clamp(24px,7vw,110px);border-top:1px solid #1d160a;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:#5a4f37;">
+    <a href="index.html">← BACK TO PORTFOLIO</a>
+    <span>PRAJJIT GON · © MMXXVI</span>
+  </footer>
+
+</div>
+
+<script src="assets/js/honeypot.js"></script>
+</body>
+</html>

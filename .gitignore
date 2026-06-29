@@ -1,0 +1,14 @@
+# Design handoff bundle (kept locally, not part of the deployed site)
+Portfolio design request-handoff.zip
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Dependency / build output (none today, but safe defaults)
+node_modules/
+dist/
+.vercel/

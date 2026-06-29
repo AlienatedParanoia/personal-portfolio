@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prajjit Gon — Portfolio</title>
+<meta name="description" content="Prajjit Gon — aspiring quant developer working where security, software and markets intersect. IBDP student. Builder of agents, platforms & strategies.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/base.css">
+<style>
+  body{background:#08090d;color:#eef0f3}
+  ::selection{background:#36E0E6;color:#04131a}
+  @keyframes cuebob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(9px);opacity:1}}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+  @keyframes pulsering{0%{transform:scale(.35);opacity:.85}100%{transform:scale(1.6);opacity:0}}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  @keyframes marq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+  spline-viewer::part(logo){display:none!important}
+</style>
+</head>
+<body>
+
+<div style="position:relative;width:100%;background:#08090d;">
+
+  <header style="position:fixed;top:0;left:0;right:0;z-index:80;display:flex;align-items:center;justify-content:space-between;padding:20px 30px;mix-blend-mode:difference;color:#fff;">
+    <a href="#top" style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.18em;font-weight:500;">PRAJJIT&nbsp;GON</a>
+    <nav style="display:flex;gap:24px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;">
+      <a href="#work" style="opacity:.85;">WORK</a>
+      <a href="#globe" style="opacity:.85;">REACH</a>
+      <a href="#reco" style="opacity:.85;">PRAISE</a>
+      <a href="#contact" style="opacity:.85;">CONTACT</a>
+    </nav>
+  </header>
+
+  <!-- 1 — SHADER INTRO -->
+  <section id="top" style="position:relative;height:100vh;width:100%;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+    <div data-shader style="position:absolute;inset:0;z-index:0;background:#000;"></div>
+    <div style="position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 80% 70% at 50% 50%, rgba(8,9,13,0) 28%, #08090d 92%);"></div>
+    <div style="position:relative;z-index:2;text-align:center;padding:0 24px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.42em;color:#36E0E6;margin-bottom:26px;">PORTFOLIO &nbsp;/&nbsp; MMXXVI</div>
+      <h1 style="margin:0;font-weight:500;font-size:clamp(54px,12.5vw,186px);line-height:.86;letter-spacing:-.035em;text-shadow:0 0 60px rgba(54,224,230,.25);">PRAJJIT<br><span style="color:#36E0E6;">GON</span></h1>
+      <p style="margin:30px auto 0;max-width:480px;font-size:clamp(14px,1.6vw,18px);font-weight:300;letter-spacing:.02em;color:#aeb4bd;">Aspiring quant developer working where security, software and markets intersect. IBDP student. Builder of agents, platforms &amp; strategies.</p>
+    </div>
+    <div style="position:absolute;bottom:34px;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.3em;color:#7d838d;">
+      <span>SCROLL</span>
+      <span style="display:inline-block;width:1px;height:34px;background:linear-gradient(#36E0E6,transparent);animation:cuebob 1.8s ease-in-out infinite;"></span>
+    </div>
+  </section>
+
+  <!-- 2 — SPLINE 3D HERO / ABOUT -->
+  <section id="about" style="position:relative;min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;gap:0;overflow:hidden;border-top:1px solid #16181f;">
+    <div style="position:absolute;top:-10%;left:-5%;width:55%;height:70%;background:radial-gradient(circle, rgba(54,224,230,.13), transparent 70%);filter:blur(20px);pointer-events:none;"></div>
+    <div style="position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;padding:clamp(32px,7vw,110px);">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.3em;color:#36E0E6;margin-bottom:24px;">01 — PROFILE</div>
+      <h2 style="margin:0;font-weight:400;font-size:clamp(28px,3.6vw,52px);line-height:1.08;letter-spacing:-.02em;">I build systems where<br><span style="color:#36E0E6;">defenders</span>, <span style="color:#36E0E6;">students</span> and<br><span style="color:#36E0E6;">markets</span> all win.</h2>
+      <p style="margin:30px 0 0;max-width:440px;font-size:16px;line-height:1.7;font-weight:300;color:#aeb4bd;">From an autonomous AI red-team agent, to a nationwide platform for student opportunities, to quantitative trading research — I like turning hard, messy problems into clean, shipped products.</p>
+      <div style="display:flex;gap:40px;margin-top:48px;font-family:'JetBrains Mono',monospace;">
+        <div><div style="font-size:30px;color:#fff;">03</div><div style="font-size:10px;letter-spacing:.18em;color:#7d838d;margin-top:6px;">SHIPPED&nbsp;PROJECTS</div></div>
+        <div><div style="font-size:30px;color:#fff;">1×</div><div style="font-size:10px;letter-spacing:.18em;color:#7d838d;margin-top:6px;">IB&nbsp;YOUTH&nbsp;FUND</div></div>
+        <div><div style="font-size:30px;color:#fff;">∞</div><div style="font-size:10px;letter-spacing:.18em;color:#7d838d;margin-top:6px;">CURIOSITY</div></div>
+      </div>
+    </div>
+    <div data-spline-wrap style="position:relative;z-index:1;min-height:62vh;background:radial-gradient(circle at 60% 45%, #11141c, #08090d 75%);">
+      <div data-spline-fallback style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#3a4049;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;">
+        <span style="width:42px;height:42px;border:2px solid #1d2129;border-top-color:#36E0E6;border-radius:50%;animation:spin 1s linear infinite;"></span>
+        LOADING&nbsp;3D&nbsp;SCENE
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 — RADIAL PROJECT NAVIGATOR -->
+  <section id="work" style="position:relative;background:#08090d;border-top:1px solid #16181f;">
+    <div data-work-pin style="position:relative;height:100vh;width:100%;overflow:hidden;display:flex;flex-direction:column;align-items:center;">
+      <div data-work-head style="position:relative;z-index:5;text-align:center;padding-top:84px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.3em;color:#36E0E6;margin-bottom:14px;">02 — SELECTED&nbsp;WORK</div>
+        <h2 style="margin:0;font-weight:400;font-size:clamp(30px,4.4vw,60px);letter-spacing:-.02em;">Scroll the wheel. Pick a world.</h2>
+        <p style="margin:14px auto 0;max-width:420px;font-size:13px;color:#7d838d;font-weight:300;">Three projects, three universes — keep scrolling to rotate, click any card to enter.</p>
+      </div>
+      <div data-wheel-mask style="position:absolute;left:0;right:0;bottom:0;height:78vh;overflow:hidden;-webkit-mask-image:linear-gradient(to top, transparent 2%, #000 34%, #000 100%);mask-image:linear-gradient(to top, transparent 2%, #000 34%, #000 100%);">
+        <div data-wheel style="position:absolute;left:50%;transform:translateX(-50%);">
+          <a data-wheel-item data-i="0" href="honeypot-wars.html" style="position:absolute;top:50%;left:50%;display:block;">
+            <div data-card-inner style="width:268px;height:352px;border-radius:18px;overflow:hidden;position:relative;background:#12100a;border:1px solid rgba(255,178,62,.35);box-shadow:0 24px 60px rgba(0,0,0,.6);transition:transform .5s ease,box-shadow .5s ease;">
+              <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 18%, rgba(255,178,62,.32), transparent 60%),repeating-linear-gradient(0deg,rgba(255,178,62,.05) 0 2px,transparent 2px 5px);"></div>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:20px;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:#FFB23E;border:1px solid rgba(255,178,62,.4);padding:4px 9px;border-radius:30px;">AI&nbsp;SECURITY</span>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#FFB23E;">↗</span>
+                </div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:48px;color:rgba(255,178,62,.85);line-height:1;align-self:center;">🐝</div>
+                <div>
+                  <div style="font-size:22px;font-weight:600;letter-spacing:-.01em;">HoneyPot Wars</div>
+                  <div style="font-size:12px;color:#b9a16f;margin-top:4px;font-weight:300;">Autonomous AI red-team agent</div>
+                </div>
+              </div>
+            </div>
+          </a>
+          <a data-wheel-item data-i="1" href="fire.html" style="position:absolute;top:50%;left:50%;display:block;">
+            <div data-card-inner style="width:268px;height:352px;border-radius:18px;overflow:hidden;position:relative;background:#150a07;border:1px solid rgba(255,90,54,.35);box-shadow:0 24px 60px rgba(0,0,0,.6);transition:transform .5s ease,box-shadow .5s ease;">
+              <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 20%, rgba(255,90,54,.34), transparent 62%),radial-gradient(circle at 80% 90%, rgba(255,160,40,.2), transparent 55%);"></div>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:20px;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:#FF7A45;border:1px solid rgba(255,90,54,.4);padding:4px 9px;border-radius:30px;">EDTECH&nbsp;PLATFORM</span>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#FF7A45;">↗</span>
+                </div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:48px;line-height:1;align-self:center;">🔥</div>
+                <div>
+                  <div style="font-size:22px;font-weight:600;letter-spacing:-.01em;">F.I.R.E</div>
+                  <div style="font-size:12px;color:#d39e8d;margin-top:4px;font-weight:300;">Student opportunity platform</div>
+                </div>
+              </div>
+            </div>
+          </a>
+          <a data-wheel-item data-i="2" href="ema-crossover.html" style="position:absolute;top:50%;left:50%;display:block;">
+            <div data-card-inner style="width:268px;height:352px;border-radius:18px;overflow:hidden;position:relative;background:#04130d;border:1px solid rgba(43,227,139,.32);box-shadow:0 24px 60px rgba(0,0,0,.6);transition:transform .5s ease,box-shadow .5s ease;">
+              <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 20%, rgba(43,227,139,.28), transparent 60%),linear-gradient(0deg,rgba(43,227,139,.06),transparent);background-size:100% 100%,26px 26px;"></div>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:20px;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:#2BE38B;border:1px solid rgba(43,227,139,.4);padding:4px 9px;border-radius:30px;">QUANT&nbsp;RESEARCH</span>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#2BE38B;">↗</span>
+                </div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:42px;line-height:1;align-self:center;">📈</div>
+                <div>
+                  <div style="font-size:22px;font-weight:600;letter-spacing:-.01em;">EMA Crossover</div>
+                  <div style="font-size:12px;color:#7fc4a4;margin-top:4px;font-weight:300;">Strategy vs. buy &amp; hold backtest</div>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 — GLOBE / REACH -->
+  <section id="globe" style="position:relative;background:#08090d;border-top:1px solid #16181f;padding:110px 24px 96px;overflow:hidden;">
+    <div style="text-align:center;max-width:680px;margin:0 auto;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.3em;color:#36E0E6;margin-bottom:14px;">03 — GLOBAL&nbsp;REACH</div>
+      <h2 style="margin:0;font-weight:400;font-size:clamp(30px,4.4vw,58px);letter-spacing:-.02em;">Used by people<br>around the world.</h2>
+      <p style="margin:16px auto 0;max-width:440px;font-size:14px;color:#7d838d;font-weight:300;">Drag the globe. Each pulse is a place where someone shipped with my tools. <span style="color:#5a6069;">(Sample data — real names &amp; quotes coming soon.)</span></p>
+    </div>
+    <div style="position:relative;width:min(560px,86vw);aspect-ratio:1;margin:30px auto 8px;">
+      <canvas data-globe style="width:100%;height:100%;opacity:0;transition:opacity 1.2s ease;cursor:grab;touch-action:none;"></canvas>
+    </div>
+    <div data-globe-stats style="display:flex;flex-wrap:wrap;justify-content:center;gap:18px;max-width:1040px;margin:0 auto 14px;">
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1100px;margin:42px auto 0;">
+      <div style="border:1px solid #1a1d25;border-radius:14px;padding:22px;background:linear-gradient(#0d0f15,#0a0c11);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;"><span style="width:34px;height:34px;border-radius:50%;background:#1f2733;color:#36E0E6;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;">AK</span><div><div style="font-size:13px;font-weight:500;">Aishwarya K.</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#6b717b;">SINGAPORE</div></div></div>
+        <p style="margin:0;font-size:13px;line-height:1.6;color:#aeb4bd;font-weight:300;">"F.I.R.E surfaced a national competition I'd never have found on my own. Game-changer."</p>
+      </div>
+      <div style="border:1px solid #1a1d25;border-radius:14px;padding:22px;background:linear-gradient(#0d0f15,#0a0c11);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;"><span style="width:34px;height:34px;border-radius:50%;background:#1f2733;color:#FFB23E;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;">MR</span><div><div style="font-size:13px;font-weight:500;">Marcus R.</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#6b717b;">LONDON</div></div></div>
+        <p style="margin:0;font-size:13px;line-height:1.6;color:#aeb4bd;font-weight:300;">"HoneyPot Wars flagged an exposure our last audit missed. The agent reads like a real attacker."</p>
+      </div>
+      <div style="border:1px solid #1a1d25;border-radius:14px;padding:22px;background:linear-gradient(#0d0f15,#0a0c11);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;"><span style="width:34px;height:34px;border-radius:50%;background:#1f2733;color:#2BE38B;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;">JT</span><div><div style="font-size:13px;font-weight:500;">Jordan T.</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#6b717b;">NEW YORK</div></div></div>
+        <p style="margin:0;font-size:13px;line-height:1.6;color:#aeb4bd;font-weight:300;">"The EMA backtest is clean, honest research — benchmarked against buy &amp; hold, no cherry-picking."</p>
+      </div>
+      <div style="border:1px solid #1a1d25;border-radius:14px;padding:22px;background:linear-gradient(#0d0f15,#0a0c11);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;"><span style="width:34px;height:34px;border-radius:50%;background:#1f2733;color:#36E0E6;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;">HN</span><div><div style="font-size:13px;font-weight:500;">Hiroko N.</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#6b717b;">TOKYO</div></div></div>
+        <p style="margin:0;font-size:13px;line-height:1.6;color:#aeb4bd;font-weight:300;">"Rare to see a student ship things this polished. Watching what Prajjit builds next."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 — RECOMMENDATIONS CARD STACK -->
+  <section id="reco" style="position:relative;background:#0a0c11;border-top:1px solid #16181f;">
+    <div data-reco-scroll style="position:relative;height:340vh;">
+      <div style="position:sticky;top:0;height:100vh;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;">
+        <div style="text-align:center;position:absolute;top:78px;left:0;right:0;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.3em;color:#36E0E6;margin-bottom:12px;">04 — RECOMMENDATIONS</div>
+          <h2 style="margin:0;font-weight:400;font-size:clamp(26px,3.6vw,48px);letter-spacing:-.02em;">What mentors &amp; peers say</h2>
+        </div>
+        <div data-reco-stack style="position:relative;width:min(460px,88vw);height:300px;">
+          <div data-reco-card data-i="0" style="position:absolute;inset:0;border-radius:20px;padding:34px;background:linear-gradient(150deg,#161922,#0e1016);border:1px solid #262b36;box-shadow:0 30px 70px rgba(0,0,0,.55);display:flex;flex-direction:column;justify-content:space-between;will-change:transform;">
+            <div><div style="color:#36E0E6;font-size:15px;letter-spacing:.2em;">★★★★★</div><p style="margin:18px 0 0;font-size:18px;line-height:1.5;font-weight:300;">"One of the most self-directed young builders I've worked with — turns ambiguity into shipped product fast."</p></div>
+            <div style="font-family:'JetBrains Mono',monospace;"><div style="font-size:13px;color:#fff;">Dr. Elena V.</div><div style="font-size:11px;color:#6b717b;margin-top:3px;">CS MENTOR · SAMPLE</div></div>
+          </div>
+          <div data-reco-card data-i="1" style="position:absolute;inset:0;border-radius:20px;padding:34px;background:linear-gradient(150deg,#1a140c,#100c07);border:1px solid #3a2c16;box-shadow:0 30px 70px rgba(0,0,0,.55);display:flex;flex-direction:column;justify-content:space-between;will-change:transform;">
+            <div><div style="color:#FFB23E;font-size:15px;letter-spacing:.2em;">★★★★★</div><p style="margin:18px 0 0;font-size:18px;line-height:1.5;font-weight:300;">"HoneyPot Wars was genuinely useful in a live assessment. The reporting flow is thoughtful and secure by design."</p></div>
+            <div style="font-family:'JetBrains Mono',monospace;"><div style="font-size:13px;color:#fff;">Advaith P.</div><div style="font-size:11px;color:#6b717b;margin-top:3px;">CO-BUILDER · SAMPLE</div></div>
+          </div>
+          <div data-reco-card data-i="2" style="position:absolute;inset:0;border-radius:20px;padding:34px;background:linear-gradient(150deg,#1a0d0a,#120907);border:1px solid #43221a;box-shadow:0 30px 70px rgba(0,0,0,.55);display:flex;flex-direction:column;justify-content:space-between;will-change:transform;">
+            <div><div style="color:#FF7A45;font-size:15px;letter-spacing:.2em;">★★★★★</div><p style="margin:18px 0 0;font-size:18px;line-height:1.5;font-weight:300;">"F.I.R.E filled a real gap for students here. Earning the IB Global Youth Action Fund was well deserved."</p></div>
+            <div style="font-family:'JetBrains Mono',monospace;"><div style="font-size:13px;color:#fff;">Programme Lead</div><div style="font-size:11px;color:#6b717b;margin-top:3px;">IB CAS · SAMPLE</div></div>
+          </div>
+          <div data-reco-card data-i="3" style="position:absolute;inset:0;border-radius:20px;padding:34px;background:linear-gradient(150deg,#06140e,#08100b);border:1px solid #194231;box-shadow:0 30px 70px rgba(0,0,0,.55);display:flex;flex-direction:column;justify-content:space-between;will-change:transform;">
+            <div><div style="color:#2BE38B;font-size:15px;letter-spacing:.2em;">★★★★★</div><p style="margin:18px 0 0;font-size:18px;line-height:1.5;font-weight:300;">"Reads markets like an engineer. The backtest methodology is rigorous beyond his years."</p></div>
+            <div style="font-family:'JetBrains Mono',monospace;"><div style="font-size:13px;color:#fff;">Quant Reviewer</div><div style="font-size:11px;color:#6b717b;margin-top:3px;">FINANCE · SAMPLE</div></div>
+          </div>
+        </div>
+        <div style="position:absolute;bottom:46px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.25em;color:#444a53;">SCROLL TO DEAL THE NEXT CARD</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 — FOOTER / CONTACT -->
+  <section id="contact" style="position:relative;background:#08090d;border-top:1px solid #16181f;padding:110px 24px 54px;overflow:hidden;">
+    <div style="position:absolute;top:-30%;left:50%;transform:translateX(-50%);width:80%;height:70%;background:radial-gradient(circle, rgba(54,224,230,.1), transparent 70%);pointer-events:none;"></div>
+    <div style="position:relative;z-index:2;text-align:center;max-width:900px;margin:0 auto;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.3em;color:#36E0E6;margin-bottom:22px;">05 — LET'S TALK</div>
+      <h2 style="margin:0;font-weight:400;font-size:clamp(38px,8vw,108px);line-height:.95;letter-spacing:-.03em;">Build something<br>worth shipping.</h2>
+      <a href="mailto:prajjit2009@gmail.com" style="display:inline-block;margin-top:40px;font-family:'JetBrains Mono',monospace;font-size:clamp(14px,2vw,20px);letter-spacing:.06em;color:#36E0E6;border-bottom:1px solid rgba(54,224,230,.4);padding-bottom:6px;">prajjit2009@gmail.com</a>
+      <div style="display:flex;justify-content:center;gap:28px;margin-top:46px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;">
+        <a href="https://github.com/AlienatedParanoia" target="_blank" rel="noopener" style="color:#aeb4bd;border:1px solid #20242d;padding:11px 20px;border-radius:30px;">GITHUB ↗</a>
+        <a href="https://www.linkedin.com/in/prajjitgon/" target="_blank" rel="noopener" style="color:#aeb4bd;border:1px solid #20242d;padding:11px 20px;border-radius:30px;">LINKEDIN ↗</a>
+      </div>
+    </div>
+    <div style="position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:90px;padding-top:24px;border-top:1px solid #16181f;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:#5a6069;">
+      <span>PRAJJIT GON — ASPIRING QUANT DEVELOPER</span>
+      <span>© MMXXVI · DESIGNED &amp; BUILT WITH CARE</span>
+    </div>
+  </section>
+
+</div>
+
+<script src="assets/js/landing.js"></script>
+</body>
+</html>
