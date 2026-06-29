@@ -31,7 +31,7 @@ Then open <http://localhost:8000>.
 - Fonts: Space Grotesk + JetBrains Mono (Google Fonts)
 - Three.js r128 — landing shader hero
 - GSAP 3.12.5 + ScrollTrigger — pinned rotating project wheel + recommendation card-stack
-- Hand-built ASCII "endless climb" canvas animation in the "About" section (no dependency, pauses off-screen)
+- ASCII halftone of `assets/img/sisyphus.jpg` in the "About" section — sampled live to a monospace grid, cyan-tinted, with a shimmer (no dependency, pauses off-screen)
 - cobe 0.6.3 — interactive globe
 - Per-project hero canvas effects are hand-written 2D-canvas (no deps)
 

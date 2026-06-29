@@ -92,11 +92,12 @@
     observe(section, function () { inView = true; sync(); }, function () { inView = false; sync(); }, '200px');
   }
 
-  // ---- 2. ASCII "Sisyphus" hero (hand-built canvas, no dependencies) ----
-  // An original ASCII scene: a stick figure eternally pushes a boulder up a
-  // slope; at the summit the boulder tumbles back to the bottom and the climb
-  // restarts. Stars twinkle in the sky behind. Throttled to ~30fps and gated to
-  // on-screen + tab-visible so it costs almost nothing.
+  // ---- 2. ASCII Sisyphus hero — live halftone of assets/img/sisyphus.jpg ----
+  // Samples the provided image into a monospace luminance grid (ASCII halftone),
+  // tinted to the site palette with a gentle shimmer/twinkle. The source's
+  // top/bottom text bands are cropped out. Throttled to ~20fps and gated to
+  // on-screen + tab-visible; falls back to drawing the image if sampling is
+  // blocked (e.g. a tainted canvas over file://).
   function initAscii() {
     var wrap = el.querySelector('[data-ascii-wrap]');
     if (!wrap) return;
@@ -105,96 +106,93 @@
     wrap.insertBefore(canvas, wrap.firstChild);
     var ctx = canvas.getContext('2d');
     var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    var W = 0, H = 0, cell = 15, cols = 0, rows = 0;
+    var off = document.createElement('canvas'), octx = off.getContext('2d');
+    var RAMP = ' .,:;-=+*oO#%@';
+    var W = 0, H = 0, cell = 8, cols = 0, rows = 0;
+    var cells = null, fallback = false, imgReady = false;
+    var img = new Image();
+
+    var build = function () {
+      if (!imgReady || W < 1 || H < 1) return;
+      var targetCols = Math.min(120, Math.max(54, Math.round(W / 8)));
+      cell = Math.max(5, W / targetCols);
+      cols = Math.max(1, Math.floor(W / cell));
+      rows = Math.max(1, Math.floor(H / cell));
+      ctx.font = Math.max(6, Math.round(cell * 1.32)) + "px 'JetBrains Mono', ui-monospace, monospace";
+      ctx.textBaseline = 'top';
+      // crop the source's top/bottom brand bands (UIMIX header / SYSTEM.ACTIVE footer)
+      var topCut = Math.round(img.naturalHeight * 0.10);
+      var sw = img.naturalWidth, sh = img.naturalHeight - topCut - Math.round(img.naturalHeight * 0.06);
+      off.width = cols; off.height = rows;
+      octx.clearRect(0, 0, cols, rows);
+      // "contain" fit so the whole figure stays visible; dark margins blend in
+      var scale = Math.min(cols / sw, rows / sh);
+      var dw = sw * scale, dh = sh * scale;
+      octx.drawImage(img, 0, topCut, sw, sh, (cols - dw) / 2, (rows - dh) / 2, dw, dh);
+      try {
+        var data = octx.getImageData(0, 0, cols, rows).data;
+        cells = [];
+        for (var gy = 0; gy < rows; gy++) {
+          for (var gx = 0; gx < cols; gx++) {
+            var i = (gy * cols + gx) * 4;
+            var lum = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+            if (lum < 26) continue; // leave the black background empty
+            var idx = Math.min(RAMP.length - 1, (lum / 255 * RAMP.length) | 0);
+            cells.push({ x: gx * cell, y: gy * cell, ch: RAMP.charAt(idx), l: lum, ph: ((gx * 12 + gy * 7) % 628) / 100 });
+          }
+        }
+        fallback = false;
+      } catch (e) { cells = null; fallback = true; }
+    };
+
     var resize = function () {
       var r = wrap.getBoundingClientRect();
       W = r.width; H = r.height;
       canvas.width = Math.max(1, W * dpr); canvas.height = Math.max(1, H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      cell = Math.max(12, Math.round(W / 46));
-      cols = Math.ceil(W / cell) + 1;
-      rows = Math.ceil(H / cell) + 1;
-      ctx.font = cell + "px 'JetBrains Mono', ui-monospace, monospace";
-      ctx.textBaseline = 'top';
+      build();
     };
-    resize();
-    window.addEventListener('resize', resize);
 
-    // Slope endpoints as grid fractions: S = bottom-left, T = upper-right.
-    var SX = 0.14, SY = 0.86, TX = 0.84, TY = 0.18;
-
-    var draw = function (cp) {
-      var scol = SX * cols, srow = SY * rows, tcol = TX * cols, trow = TY * rows;
-      var R = Math.max(2, Math.round(cols * 0.06));
-      var surfAt = function (col) { var u = (col - scol) / (tcol - scol); if (u < 0) u = 0; else if (u > 1) u = 1; return srow + (trow - srow) * u; };
-
-      // climb -> brief strain at the summit -> boulder tumbles down fast while
-      // the figure trudges after it; everything resets to the bottom each cycle.
-      var boulderC, figureC, pushing;
-      var climbEnd = 0.72, holdEnd = 0.78;
-      if (cp < climbEnd) { var e = cp / climbEnd; boulderC = e * e * (3 - 2 * e); figureC = boulderC; pushing = true; }
-      else if (cp < holdEnd) { boulderC = 1; figureC = 1; pushing = true; }
-      else { var f = (cp - holdEnd) / (1 - holdEnd); boulderC = Math.max(0, 1 - f * 1.7); figureC = 1 - f; pushing = false; }
-
-      var slopeLen = Math.sqrt((tcol - scol) * (tcol - scol) + (trow - srow) * (trow - srow));
-      var offF = (R + 1.5) / (slopeLen || 1);
-      if (pushing) figureC = Math.max(0, boulderC - offF); // keep the figure just downhill of the boulder
-
-      var bcCol = scol + (tcol - scol) * boulderC;
-      var bcRow = surfAt(bcCol) - R * 0.85;
-      var fCol = Math.round(scol + (tcol - scol) * figureC);
-      var fRow = Math.round(surfAt(fCol));
-
-      // small stick figure, feet on the slope at (fCol, fRow)
-      var fig = {};
-      fig[fCol + ',' + (fRow - 2)] = 'o';
-      fig[(fCol - 1) + ',' + (fRow - 1)] = '/'; fig[fCol + ',' + (fRow - 1)] = '|'; fig[(fCol + 1) + ',' + (fRow - 1)] = '\\';
-      fig[(fCol - 1) + ',' + fRow] = '/'; fig[(fCol + 1) + ',' + fRow] = '\\';
-
+    var draw = function (t) {
       ctx.clearRect(0, 0, W, H);
-      for (var gy = 0; gy < rows; gy++) {
-        for (var gx = 0; gx < cols; gx++) {
-          var ch = null, style = 0;
-          var fk = fig[gx + ',' + gy];
-          if (fk !== undefined) { ch = fk; style = 1; }                                   // figure
-          else {
-            var dx = gx - bcCol, dy = gy - bcRow, dd = dx * dx + dy * dy;
-            if (dd <= R * R) { ch = dd <= (R - 1.2) * (R - 1.2) ? '@' : '#'; style = 2; }   // boulder
-            else {
-              var sr = surfAt(gx), band = gy - sr;
-              if (band >= -0.5 && band <= 0.8) { ch = '='; style = 3; }                     // slope surface
-              else if (band > 0.8 && band <= 3.5) { if (((gx * 3 + gy * 7) % 3) === 0) { ch = band < 1.8 ? ':' : '.'; style = 4; } } // ground
-              else if (band < -0.5) { if (((gx * 12 + gy * 7) % 29) === 0) { var tw = 0.5 + 0.5 * Math.sin(cp * 34 + gx * 1.3 + gy * 0.7); if (tw > 0.5) { ch = tw > 0.82 ? '+' : '.'; style = 5; } } } // stars
-            }
-          }
-          if (ch && ch !== ' ') {
-            ctx.fillStyle = style === 1 ? 'rgba(232,240,245,0.95)'
-              : style === 2 ? (ch === '@' ? 'rgba(54,224,230,0.95)' : 'rgba(54,224,230,0.6)')
-              : style === 3 ? 'rgba(130,158,168,0.72)'
-              : style === 4 ? 'rgba(92,110,122,0.38)'
-              : 'rgba(150,170,182,0.5)';
-            ctx.fillText(ch, gx * cell, gy * cell);
-          }
-        }
+      if (fallback && imgReady) {
+        var s = Math.min(W / img.naturalWidth, H / img.naturalHeight);
+        var dw = img.naturalWidth * s, dh = img.naturalHeight * s;
+        ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+        return;
+      }
+      if (!cells) return;
+      for (var k = 0; k < cells.length; k++) {
+        var c = cells[k];
+        var shim = 0.82 + 0.18 * Math.sin(t * 2 + c.ph); // subtle living-ASCII shimmer / twinkle
+        var a = Math.min(1, (0.16 + c.l / 255 * 0.85) * shim);
+        ctx.fillStyle = c.l > 175 ? 'rgba(200,240,246,' + a + ')'
+          : c.l > 95 ? 'rgba(96,178,190,' + a + ')'
+          : 'rgba(72,120,132,' + (a * 0.85) + ')';
+        ctx.fillText(c.ch, c.x, c.y);
       }
     };
 
-    var CYCLE = 10000; // ms for one full push-and-fall cycle
     var raf = null, inView = false, lastDraw = 0;
     var step = function (now) {
       raf = requestAnimationFrame(step);
-      if (now - lastDraw < 33) return; // ~30fps
+      if (now - lastDraw < 48) return; // ~20fps is plenty for a shimmer
       lastDraw = now;
-      draw((now % CYCLE) / CYCLE);
+      draw(now / 1000);
     };
     var sync = function () {
-      var active = inView && !pageHidden;
+      var active = inView && !pageHidden && imgReady;
       if (active && raf === null) { lastDraw = 0; raf = requestAnimationFrame(step); }
       else if (!active && raf !== null) { cancelAnimationFrame(raf); raf = null; }
     };
+
+    img.onload = function () { imgReady = true; resize(); sync(); };
+    img.onerror = function () { imgReady = false; };
+    img.src = 'assets/img/sisyphus.jpg';
+    resize();
+    window.addEventListener('resize', resize);
     syncers.push(sync);
     observe(wrap, function () { inView = true; sync(); }, function () { inView = false; sync(); }, '200px');
-    draw(0); // paint one frame immediately so it's never blank
   }
 
   // ---- 3. Radial wheel navigator ----
