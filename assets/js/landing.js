@@ -1,13 +1,13 @@
 /* ===========================================================================
    landing.js — behaviors for the portfolio landing page.
    Ported 1:1 from the Claude Design prototype's Component class:
-   shader intro (three.js), UnicornStudio animation hero, project wheel (GSAP),
+   shader intro (three.js), ASCII "endless climb" hero, project wheel (GSAP),
    interactive globe (cobe), and the recommendation card-stack (GSAP).
 
    Performance pass (visual output unchanged):
    - Every continuous render loop pauses when its section scrolls off-screen
      and when the browser tab is hidden (IntersectionObserver + visibilitychange).
-   - The UnicornStudio scene is lazy-loaded only as you approach the About section.
+   - The About-section ASCII animation is hand-built (no dependency) and pauses off-screen.
    - devicePixelRatio is capped and the globe sample count reduced.
    =========================================================================== */
 (function () {
@@ -92,29 +92,75 @@
     observe(section, function () { inView = true; sync(); }, function () { inView = false; sync(); }, '200px');
   }
 
-  // ---- 2. UnicornStudio animation hero (lazy-loaded on approach) ----
-  function initUnicorn() {
-    var wrap = el.querySelector('[data-unicorn-wrap]');
+  // ---- 2. ASCII "endless climb" hero (hand-built canvas, no dependencies) ----
+  // A monospace field that perpetually scrolls upward along a diagonal ridge —
+  // the boulder's path. Cyan highlights on the densest cells; throttled to
+  // ~30fps and gated to on-screen + tab-visible so it costs almost nothing.
+  function initAscii() {
+    var wrap = el.querySelector('[data-ascii-wrap]');
     if (!wrap) return;
-    var hideFallback = function () { var f = wrap.querySelector('[data-unicorn-fallback]'); if (f) f.style.display = 'none'; };
-    var started = false;
-    var load = function () {
-      if (started) return; started = true;
-      var go = function () {
-        try {
-          if (window.UnicornStudio && !window.UnicornStudio.isInitialized) {
-            window.UnicornStudio.init();
-            window.UnicornStudio.isInitialized = true;
-          }
-        } catch (e) {}
-        setTimeout(hideFallback, 1500);
-      };
-      if (window.UnicornStudio && window.UnicornStudio.isInitialized) { hideFallback(); return; }
-      loadScript('https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.33/dist/unicornStudio.umd.js').then(go).catch(function () {});
+    var canvas = document.createElement('canvas');
+    canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1;';
+    wrap.insertBefore(canvas, wrap.firstChild);
+    var ctx = canvas.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    var ramp = ' .:-=+*xX#%@';
+    var W = 0, H = 0, cell = 15, cols = 0, rows = 0;
+    var resize = function () {
+      var r = wrap.getBoundingClientRect();
+      W = r.width; H = r.height;
+      canvas.width = Math.max(1, W * dpr); canvas.height = Math.max(1, H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cell = Math.max(12, Math.round(W / 44));
+      cols = Math.ceil(W / cell) + 1;
+      rows = Math.ceil(H / cell) + 1;
+      ctx.font = cell + "px 'JetBrains Mono', ui-monospace, monospace";
+      ctx.textBaseline = 'top';
     };
-    // The scene itself only renders while on-screen (data-us-lazyload), and we
-    // don't even fetch the runtime until the About section nears the viewport.
-    observe(wrap, load, function () {}, '400px');
+    resize();
+    window.addEventListener('resize', resize);
+
+    var draw = function (t) {
+      ctx.clearRect(0, 0, W, H);
+      var climb = t * 0.05;
+      for (var gy = 0; gy < rows; gy++) {
+        var w = gy / rows;
+        for (var gx = 0; gx < cols; gx++) {
+          var u = gx / cols;
+          // upward-flowing field (subtract `climb` from the vertical phase)
+          var v = Math.sin(w * 6.0 + climb + Math.sin(u * 4.0) * 0.8)
+                + Math.sin(u * 5.0 - climb * 0.6) * 0.6
+                + Math.sin((u + w) * 5.0 - climb * 0.3) * 0.4;
+          var n = (v / 2.0 + 1) / 2; // -> ~0..1
+          // brighter ridge along the bottom-left -> top-right diagonal (the climb)
+          var d = (1 - w) - u;
+          var ridge = Math.exp(-d * d * 8.0);
+          n = n * 0.72 + ridge * 0.55;
+          if (n < 0.16) continue; // leave negative space, skip the fillText
+          if (n > 1) n = 1;
+          var ch = ramp.charAt(Math.min(ramp.length - 1, (n * ramp.length) | 0));
+          var a = 0.12 + n * 0.8;
+          ctx.fillStyle = n > 0.7 ? 'rgba(54,224,230,' + a + ')' : 'rgba(120,150,162,' + (a * 0.55) + ')';
+          ctx.fillText(ch, gx * cell, gy * cell);
+        }
+      }
+    };
+
+    var raf = null, inView = false, lastDraw = 0, tc = 0;
+    var step = function (now) {
+      raf = requestAnimationFrame(step);
+      if (now - lastDraw < 33) return; // ~30fps is plenty for an ASCII field
+      lastDraw = now; tc += 0.8;
+      draw(tc);
+    };
+    var sync = function () {
+      var active = inView && !pageHidden;
+      if (active && raf === null) { lastDraw = 0; raf = requestAnimationFrame(step); }
+      else if (!active && raf !== null) { cancelAnimationFrame(raf); raf = null; }
+    };
+    syncers.push(sync);
+    observe(wrap, function () { inView = true; sync(); }, function () { inView = false; sync(); }, '200px');
+    draw(0); // paint one frame immediately so it's never blank
   }
 
   // ---- 3. Radial wheel navigator ----
@@ -283,7 +329,7 @@
 
   async function boot() {
     initShader().catch(function () {});
-    initUnicorn();
+    initAscii();
     try {
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js');
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js');

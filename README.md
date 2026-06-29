@@ -14,8 +14,8 @@ A static, dark, animation-driven personal portfolio recreated from a Claude Desi
 
 ## Run locally
 
-The interactive globe (cobe) and the Spline 3D viewer load as **ES modules from a CDN**, which
-browsers block over `file://`. Serve over HTTP instead:
+The interactive globe (cobe) loads as an **ES module from a CDN**, which browsers block over
+`file://`. Serve over HTTP instead:
 
 ```bash
 # Python 3
@@ -31,7 +31,7 @@ Then open <http://localhost:8000>.
 - Fonts: Space Grotesk + JetBrains Mono (Google Fonts)
 - Three.js r128 — landing shader hero
 - GSAP 3.12.5 + ScrollTrigger — pinned rotating project wheel + recommendation card-stack
-- UnicornStudio (v1.4.33) — animated scene in the "About" section (lazy-loaded, pauses off-screen)
+- Hand-built ASCII "endless climb" canvas animation in the "About" section (no dependency, pauses off-screen)
 - cobe 0.6.3 — interactive globe
 - Per-project hero canvas effects are hand-written 2D-canvas (no deps)
 
