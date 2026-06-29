@@ -17,7 +17,10 @@
   @keyframes pulsering{0%{transform:scale(.35);opacity:.85}100%{transform:scale(1.6);opacity:0}}
   @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
   @keyframes marq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-  spline-viewer::part(logo){display:none!important}
+  /* UnicornStudio embed: clip the canvas frame and keep it non-interactive so it never eats scroll/clicks. */
+  [data-us-project]{position:relative!important;overflow:hidden!important}
+  [data-us-project] canvas{clip-path:inset(0 0 8% 0)}
+  [data-us-project] *{pointer-events:none!important}
 </style>
 </head>
 <body>
@@ -49,23 +52,26 @@
     </div>
   </section>
 
-  <!-- 2 — SPLINE 3D HERO / ABOUT -->
+  <!-- 2 — ANIMATION HERO / ABOUT -->
   <section id="about" style="position:relative;min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;gap:0;overflow:hidden;border-top:1px solid #16181f;">
     <div style="position:absolute;top:-10%;left:-5%;width:55%;height:70%;background:radial-gradient(circle, rgba(54,224,230,.13), transparent 70%);filter:blur(20px);pointer-events:none;"></div>
     <div style="position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;padding:clamp(32px,7vw,110px);">
       <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.3em;color:#36E0E6;margin-bottom:24px;">01 — PROFILE</div>
       <h2 style="margin:0;font-weight:400;font-size:clamp(28px,3.6vw,52px);line-height:1.08;letter-spacing:-.02em;">I build systems where<br><span style="color:#36E0E6;">defenders</span>, <span style="color:#36E0E6;">students</span> and<br><span style="color:#36E0E6;">markets</span> all win.</h2>
       <p style="margin:30px 0 0;max-width:440px;font-size:16px;line-height:1.7;font-weight:300;color:#aeb4bd;">From an autonomous AI red-team agent, to a nationwide platform for student opportunities, to quantitative trading research — I like turning hard, messy problems into clean, shipped products.</p>
+      <p style="margin:18px 0 0;max-width:440px;font-size:15px;line-height:1.7;font-weight:300;font-style:italic;color:#36E0E6;">Like Sisyphus with his boulder, I keep pushing — hard work, every day, each climb a little further than the last.</p>
       <div style="display:flex;gap:40px;margin-top:48px;font-family:'JetBrains Mono',monospace;">
         <div><div style="font-size:30px;color:#fff;">03</div><div style="font-size:10px;letter-spacing:.18em;color:#7d838d;margin-top:6px;">SHIPPED&nbsp;PROJECTS</div></div>
         <div><div style="font-size:30px;color:#fff;">1×</div><div style="font-size:10px;letter-spacing:.18em;color:#7d838d;margin-top:6px;">IB&nbsp;YOUTH&nbsp;FUND</div></div>
         <div><div style="font-size:30px;color:#fff;">∞</div><div style="font-size:10px;letter-spacing:.18em;color:#7d838d;margin-top:6px;">CURIOSITY</div></div>
       </div>
     </div>
-    <div data-spline-wrap style="position:relative;z-index:1;min-height:62vh;background:radial-gradient(circle at 60% 45%, #11141c, #08090d 75%);">
-      <div data-spline-fallback style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#3a4049;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;">
+    <div data-unicorn-wrap style="position:relative;z-index:1;min-height:62vh;overflow:hidden;background:radial-gradient(circle at 60% 45%, #11141c, #08090d 75%);">
+      <div data-us-project="OMzqyUv6M3kSnv0JeAtC" data-us-lazyload="true" data-us-dpi="1.5" data-us-scale="1" data-us-fps="60" data-us-disablemobile="true" style="position:absolute;inset:0;width:100%;height:100%;z-index:1;"></div>
+      <div style="position:absolute;left:24px;bottom:22px;z-index:3;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.28em;color:#7d838d;display:flex;align-items:center;gap:10px;pointer-events:none;"><span style="color:#36E0E6;">∞</span> ENDLESS&nbsp;PURSUIT</div>
+      <div data-unicorn-fallback style="position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#3a4049;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;pointer-events:none;">
         <span style="width:42px;height:42px;border:2px solid #1d2129;border-top-color:#36E0E6;border-radius:50%;animation:spin 1s linear infinite;"></span>
-        LOADING&nbsp;3D&nbsp;SCENE
+        LOADING&nbsp;ANIMATION
       </div>
     </div>
   </section>

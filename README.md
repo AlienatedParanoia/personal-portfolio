@@ -31,7 +31,7 @@ Then open <http://localhost:8000>.
 - Fonts: Space Grotesk + JetBrains Mono (Google Fonts)
 - Three.js r128 — landing shader hero
 - GSAP 3.12.5 + ScrollTrigger — pinned rotating project wheel + recommendation card-stack
-- @splinetool/viewer 1.9.48 — 3D scene in the "About" section
+- UnicornStudio (v1.4.33) — animated scene in the "About" section (lazy-loaded, pauses off-screen)
 - cobe 0.6.3 — interactive globe
 - Per-project hero canvas effects are hand-written 2D-canvas (no deps)
 

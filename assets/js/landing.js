@@ -1,13 +1,13 @@
 /* ===========================================================================
    landing.js — behaviors for the portfolio landing page.
    Ported 1:1 from the Claude Design prototype's Component class:
-   shader intro (three.js), Spline 3D hero, radial project wheel (GSAP),
+   shader intro (three.js), UnicornStudio animation hero, project wheel (GSAP),
    interactive globe (cobe), and the recommendation card-stack (GSAP).
 
    Performance pass (visual output unchanged):
    - Every continuous render loop pauses when its section scrolls off-screen
      and when the browser tab is hidden (IntersectionObserver + visibilitychange).
-   - The Spline 3D scene is lazy-loaded only as you approach the About section.
+   - The UnicornStudio scene is lazy-loaded only as you approach the About section.
    - devicePixelRatio is capped and the globe sample count reduced.
    =========================================================================== */
 (function () {
@@ -92,25 +92,28 @@
     observe(section, function () { inView = true; sync(); }, function () { inView = false; sync(); }, '200px');
   }
 
-  // ---- 2. Spline 3D hero (lazy-loaded on approach) ----
-  function initSpline() {
-    var wrap = el.querySelector('[data-spline-wrap]');
+  // ---- 2. UnicornStudio animation hero (lazy-loaded on approach) ----
+  function initUnicorn() {
+    var wrap = el.querySelector('[data-unicorn-wrap]');
     if (!wrap) return;
-    var hideFallback = function () { var f = wrap.querySelector('[data-spline-fallback]'); if (f) f.style.display = 'none'; };
+    var hideFallback = function () { var f = wrap.querySelector('[data-unicorn-fallback]'); if (f) f.style.display = 'none'; };
     var started = false;
     var load = function () {
       if (started) return; started = true;
-      loadScript('https://unpkg.com/@splinetool/viewer@1.9.48/build/spline-viewer.js', true).then(function () {
-        var v = document.createElement('spline-viewer');
-        v.setAttribute('url', 'https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode');
-        v.setAttribute('loading-anim-type', 'none');
-        v.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:2;';
-        v.addEventListener('load-complete', hideFallback);
-        wrap.appendChild(v);
-        setTimeout(hideFallback, 6000);
-      }).catch(function () {});
+      var go = function () {
+        try {
+          if (window.UnicornStudio && !window.UnicornStudio.isInitialized) {
+            window.UnicornStudio.init();
+            window.UnicornStudio.isInitialized = true;
+          }
+        } catch (e) {}
+        setTimeout(hideFallback, 1500);
+      };
+      if (window.UnicornStudio && window.UnicornStudio.isInitialized) { hideFallback(); return; }
+      loadScript('https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.33/dist/unicornStudio.umd.js').then(go).catch(function () {});
     };
-    // Only fetch + render the (heavy) 3D scene once the About section nears view.
+    // The scene itself only renders while on-screen (data-us-lazyload), and we
+    // don't even fetch the runtime until the About section nears the viewport.
     observe(wrap, load, function () {}, '400px');
   }
 
@@ -280,7 +283,7 @@
 
   async function boot() {
     initShader().catch(function () {});
-    initSpline();
+    initUnicorn();
     try {
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js');
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js');
