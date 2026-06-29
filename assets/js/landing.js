@@ -1,13 +1,13 @@
 /* ===========================================================================
    landing.js — behaviors for the portfolio landing page.
    Ported 1:1 from the Claude Design prototype's Component class:
-   shader intro (three.js), ASCII Sisyphus hero, project wheel (GSAP),
+   shader intro (three.js), UnicornStudio animation hero, project wheel (GSAP),
    interactive globe (cobe), and the recommendation card-stack (GSAP).
 
    Performance pass (visual output unchanged):
    - Every continuous render loop pauses when its section scrolls off-screen
      and when the browser tab is hidden (IntersectionObserver + visibilitychange).
-   - The About-section ASCII animation is hand-built (no dependency) and pauses off-screen.
+   - The UnicornStudio scene is lazy-loaded only as you approach the About section.
    - devicePixelRatio is capped and the globe sample count reduced.
    =========================================================================== */
 (function () {
@@ -92,107 +92,29 @@
     observe(section, function () { inView = true; sync(); }, function () { inView = false; sync(); }, '200px');
   }
 
-  // ---- 2. ASCII Sisyphus hero — live halftone of assets/img/sisyphus.jpg ----
-  // Samples the provided image into a monospace luminance grid (ASCII halftone),
-  // tinted to the site palette with a gentle shimmer/twinkle. The source's
-  // top/bottom text bands are cropped out. Throttled to ~20fps and gated to
-  // on-screen + tab-visible; falls back to drawing the image if sampling is
-  // blocked (e.g. a tainted canvas over file://).
-  function initAscii() {
-    var wrap = el.querySelector('[data-ascii-wrap]');
+  // ---- 2. UnicornStudio animation hero (lazy-loaded on approach) ----
+  function initUnicorn() {
+    var wrap = el.querySelector('[data-unicorn-wrap]');
     if (!wrap) return;
-    var canvas = document.createElement('canvas');
-    canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1;';
-    wrap.insertBefore(canvas, wrap.firstChild);
-    var ctx = canvas.getContext('2d');
-    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    var off = document.createElement('canvas'), octx = off.getContext('2d');
-    var RAMP = ' .,:;-=+*oO#%@';
-    var W = 0, H = 0, cell = 8, cols = 0, rows = 0;
-    var cells = null, fallback = false, imgReady = false;
-    var img = new Image();
-
-    var build = function () {
-      if (!imgReady || W < 1 || H < 1) return;
-      var targetCols = Math.min(120, Math.max(54, Math.round(W / 8)));
-      cell = Math.max(5, W / targetCols);
-      cols = Math.max(1, Math.floor(W / cell));
-      rows = Math.max(1, Math.floor(H / cell));
-      ctx.font = Math.max(6, Math.round(cell * 1.32)) + "px 'JetBrains Mono', ui-monospace, monospace";
-      ctx.textBaseline = 'top';
-      // crop the source's top/bottom brand bands (UIMIX header / SYSTEM.ACTIVE footer)
-      var topCut = Math.round(img.naturalHeight * 0.10);
-      var sw = img.naturalWidth, sh = img.naturalHeight - topCut - Math.round(img.naturalHeight * 0.06);
-      off.width = cols; off.height = rows;
-      octx.clearRect(0, 0, cols, rows);
-      // "contain" fit so the whole figure stays visible; dark margins blend in
-      var scale = Math.min(cols / sw, rows / sh);
-      var dw = sw * scale, dh = sh * scale;
-      octx.drawImage(img, 0, topCut, sw, sh, (cols - dw) / 2, (rows - dh) / 2, dw, dh);
-      try {
-        var data = octx.getImageData(0, 0, cols, rows).data;
-        cells = [];
-        for (var gy = 0; gy < rows; gy++) {
-          for (var gx = 0; gx < cols; gx++) {
-            var i = (gy * cols + gx) * 4;
-            var lum = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
-            if (lum < 26) continue; // leave the black background empty
-            var idx = Math.min(RAMP.length - 1, (lum / 255 * RAMP.length) | 0);
-            cells.push({ x: gx * cell, y: gy * cell, ch: RAMP.charAt(idx), l: lum, ph: ((gx * 12 + gy * 7) % 628) / 100 });
+    var hideFallback = function () { var f = wrap.querySelector('[data-unicorn-fallback]'); if (f) f.style.display = 'none'; };
+    var started = false;
+    var load = function () {
+      if (started) return; started = true;
+      var go = function () {
+        try {
+          if (window.UnicornStudio && !window.UnicornStudio.isInitialized) {
+            window.UnicornStudio.init();
+            window.UnicornStudio.isInitialized = true;
           }
-        }
-        fallback = false;
-      } catch (e) { cells = null; fallback = true; }
+        } catch (e) {}
+        setTimeout(hideFallback, 1500);
+      };
+      if (window.UnicornStudio && window.UnicornStudio.isInitialized) { hideFallback(); return; }
+      loadScript('https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.33/dist/unicornStudio.umd.js').then(go).catch(function () {});
     };
-
-    var resize = function () {
-      var r = wrap.getBoundingClientRect();
-      W = r.width; H = r.height;
-      canvas.width = Math.max(1, W * dpr); canvas.height = Math.max(1, H * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      build();
-    };
-
-    var draw = function (t) {
-      ctx.clearRect(0, 0, W, H);
-      if (fallback && imgReady) {
-        var s = Math.min(W / img.naturalWidth, H / img.naturalHeight);
-        var dw = img.naturalWidth * s, dh = img.naturalHeight * s;
-        ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
-        return;
-      }
-      if (!cells) return;
-      for (var k = 0; k < cells.length; k++) {
-        var c = cells[k];
-        var shim = 0.82 + 0.18 * Math.sin(t * 2 + c.ph); // subtle living-ASCII shimmer / twinkle
-        var a = Math.min(1, (0.16 + c.l / 255 * 0.85) * shim);
-        ctx.fillStyle = c.l > 175 ? 'rgba(200,240,246,' + a + ')'
-          : c.l > 95 ? 'rgba(96,178,190,' + a + ')'
-          : 'rgba(72,120,132,' + (a * 0.85) + ')';
-        ctx.fillText(c.ch, c.x, c.y);
-      }
-    };
-
-    var raf = null, inView = false, lastDraw = 0;
-    var step = function (now) {
-      raf = requestAnimationFrame(step);
-      if (now - lastDraw < 48) return; // ~20fps is plenty for a shimmer
-      lastDraw = now;
-      draw(now / 1000);
-    };
-    var sync = function () {
-      var active = inView && !pageHidden && imgReady;
-      if (active && raf === null) { lastDraw = 0; raf = requestAnimationFrame(step); }
-      else if (!active && raf !== null) { cancelAnimationFrame(raf); raf = null; }
-    };
-
-    img.onload = function () { imgReady = true; resize(); sync(); };
-    img.onerror = function () { imgReady = false; };
-    img.src = 'assets/img/sisyphus.jpg';
-    resize();
-    window.addEventListener('resize', resize);
-    syncers.push(sync);
-    observe(wrap, function () { inView = true; sync(); }, function () { inView = false; sync(); }, '200px');
+    // Only fetch the runtime when the About section nears the viewport; the
+    // scene itself pauses off-screen via data-us-lazyload on the project div.
+    observe(wrap, load, function () {}, '400px');
   }
 
   // ---- 3. Radial wheel navigator ----
@@ -361,7 +283,7 @@
 
   async function boot() {
     initShader().catch(function () {});
-    initAscii();
+    initUnicorn();
     try {
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js');
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js');
